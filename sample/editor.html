@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>문서 만들기 - 에디터 | HuTech</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Pretendard Font -->
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <!-- Custom -->
+  <link href="css/style.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f0f0f0;
+    }
+    .editor-page {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* Editor Left Panel */
+    .editor-left {
+      flex: 1;
+      background: #fff;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    .editor-left-header {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--primary-light);
+    }
+    .editor-left-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .editor-left-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+    }
+    /* Editor Right Panel - Preview */
+    .editor-right {
+      flex: 1;
+      background: var(--bg-light);
+      display: flex;
+      flex-direction: column;
+    }
+    .editor-right-header {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .editor-right-header h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .editor-right-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+    }
+    /* Form styles */
+    .form-section {
+      margin-bottom: 28px;
+    }
+    .form-section-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-dark);
+    }
+    .form-row-item {
+      display: flex;
+      align-items: flex-start;
+      border-bottom: 1px solid #f0f0f0;
+      padding: 8px 0;
+    }
+    .form-row-item .label-col {
+      width: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+      padding-top: 8px;
+      flex-shrink: 0;
+    }
+    .form-row-item .input-col {
+      flex: 1;
+    }
+    .form-row-item .input-col input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .form-row-item .input-col input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .input-pair {
+      display: flex;
+      gap: 8px;
+    }
+    .input-pair input {
+      flex: 1;
+    }
+    .input-with-search {
+      position: relative;
+    }
+    .input-with-search input {
+      padding-left: 32px !important;
+    }
+    .input-with-search .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 14px;
+    }
+    .btn-clear-field {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+      padding: 8px 4px;
+      font-size: 16px;
+    }
+    .btn-clear-field:hover {
+      color: var(--primary);
+    }
+    .phone-group {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .phone-group input {
+      width: 80px;
+      text-align: center;
+    }
+    .phone-group .phone-label {
+      font-size: 12px;
+      color: var(--text-light);
+      min-width: 36px;
+    }
+    .btn-add-row {
+      font-size: 13px;
+      color: var(--text-light);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .btn-add-row:hover {
+      color: var(--primary);
+    }
+
+    /* Divider */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 24px 0;
+    }
+
+    /* AI content area */
+    .ai-block {
+      margin-bottom: 20px;
+    }
+    .ai-block-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .ai-block-header input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+    }
+    .ai-block-header .ai-label {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .ai-block-header .ai-version {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-light);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .ai-block-content {
+      background: #fffbe6;
+      border: 1px solid #ffe58f;
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.8;
+      min-height: 80px;
+    }
+
+    /* Manual input */
+    .manual-block {
+      margin-bottom: 20px;
+    }
+    .manual-block-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .manual-block-header input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+    }
+    .manual-block-header .manual-label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .manual-block-header .required {
+      color: #e74c3c;
+    }
+    .manual-block textarea {
+      width: 100%;
+      min-height: 80px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      resize: vertical;
+    }
+    .manual-block textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .manual-block .helper-text {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* Bottom actions */
+    .editor-bottom {
+      padding: 16px 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+    }
+
+    /* Preview document */
+    .editor-right {
+      background: #fff;
+    }
+    .editor-right-body {
+      padding: 24px 28px;
+    }
+    .preview-doc {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 32px 28px;
+    }
+    .preview-section {
+      margin-bottom: 28px;
+    }
+    .preview-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-dark);
+    }
+    .preview-field-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 0;
+    }
+    .preview-field-table th,
+    .preview-field-table td {
+      border: none;
+      border-bottom: 1px solid #f0f0f0;
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    .preview-field-table th {
+      background: none;
+      font-weight: 500;
+      color: var(--text-gray);
+      width: 90px;
+      white-space: nowrap;
+    }
+    .preview-field-table td {
+      color: var(--text-dark);
+    }
+    .preview-field-table .phone-row td {
+      padding: 0;
+    }
+    .preview-field-table .phone-inner {
+      display: flex;
+      width: 100%;
+    }
+    .preview-field-table .phone-inner span {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--text-gray);
+    }
+    .preview-field-table .phone-inner span + span {
+      border-left: 1px solid #f0f0f0;
+    }
+    .preview-ai-text {
+      background: none;
+      border-radius: 0;
+      padding: 0;
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-dark);
+      margin-bottom: 0;
+    }
+    .preview-manual-text {
+      font-size: 13px;
+      line-height: 1.8;
+      padding: 0;
+      min-height: 60px;
+      color: var(--text-dark);
+      border: 1px solid #f0f0f0;
+      border-radius: 4px;
+      padding: 12px;
+    }
+    .btn-apply {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .editor-page {
+        flex-direction: column;
+      }
+      .editor-left, .editor-right {
+        flex: none;
+        height: 50vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="editor-page">
+    <!-- ===== Left: Form Editor ===== -->
+    <div class="editor-left">
+      <div class="editor-left-header">
+        <h2>문서 만들기</h2>
+        <a href="index.html" class="btn-close-editor" title="닫기" style="font-size: 20px; color: var(--text-light); text-decoration: none;">&times;</a>
+      </div>
+
+      <div class="editor-left-body">
+        <!-- Section 1: 고소인 -->
+        <div class="form-section">
+          <div class="form-section-title">1. 고소인</div>
+
+          <div class="form-row-item">
+            <div class="label-col">성명</div>
+            <div class="input-col d-flex align-center gap-8">
+              <input type="text" id="inputName" value="홍길동" placeholder="입력하세요">
+              <button class="btn-clear-field"><i class="bi bi-x-circle"></i></button>
+            </div>
+          </div>
+
+          <div class="form-row-item">
+            <div class="label-col">주민등록번호</div>
+            <div class="input-col d-flex gap-8 align-center">
+              <input type="text" id="inputSsn1" placeholder="입력하세요" style="width: 50%;">
+              <span>-</span>
+              <input type="text" id="inputSsn2" placeholder="입력하세요" style="width: 50%;">
+              <button class="btn-clear-field"><i class="bi bi-x-circle"></i></button>
+            </div>
+          </div>
+
+          <div class="form-row-item">
+            <div class="label-col">주소</div>
+            <div class="input-col">
+              <div class="input-with-search mb-8">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" id="inputAddr" placeholder="주소검색">
+              </div>
+              <div class="d-flex align-center gap-8">
+                <input type="text" id="inputAddrDetail" placeholder="상세주소 입력">
+                <button class="btn-clear-field"><i class="bi bi-x-circle"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row-item">
+            <div class="label-col">직업</div>
+            <div class="input-col d-flex align-center gap-8">
+              <input type="text" id="inputJob" placeholder="입력하세요">
+              <button class="btn-clear-field"><i class="bi bi-x-circle"></i></button>
+            </div>
+          </div>
+
+          <div class="form-row-item">
+            <div class="label-col">사무실 주소</div>
+            <div class="input-col">
+              <div class="input-with-search mb-8">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" placeholder="주소검색">
+              </div>
+              <div class="d-flex align-center gap-8">
+                <input type="text" placeholder="상세주소 입력">
+                <button class="btn-clear-field"><i class="bi bi-x-circle"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row-item">
+            <div class="label-col">전화</div>
+            <div class="input-col">
+              <div class="phone-group">
+                <input type="tel" placeholder="휴대폰" style="width: 100px;">
+                <input type="tel" placeholder="-포함">
+                <span class="phone-label">자택</span>
+                <input type="tel" placeholder="-포함">
+                <span class="phone-label">사무실</span>
+                <input type="tel" placeholder="-포함">
+                <button class="btn-clear-field"><i class="bi bi-x-circle"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row-item">
+            <div class="label-col">이메일</div>
+            <div class="input-col d-flex align-center gap-8">
+              <input type="text" id="inputEmail" placeholder="입력하세요">
+              <button class="btn-clear-field"><i class="bi bi-x-circle"></i></button>
+            </div>
+          </div>
+
+          <div class="form-row-item">
+            <div class="label-col">입력</div>
+            <div class="input-col d-flex align-center gap-8">
+              <input type="text" placeholder="입력하세요">
+              <button class="btn-clear-field"><i class="bi bi-x-circle"></i></button>
+            </div>
+          </div>
+
+          <button class="btn-add-row mt-2">+ 추가</button>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- Bottom actions for section 1 -->
+        <div class="d-flex justify-between align-center mb-16">
+          <span style="font-size: 13px; color: var(--text-light);">전체 ▾</span>
+          <div class="d-flex gap-8">
+            <button class="btn-outline" style="font-size: 12px;">AI 재요청</button>
+            <button class="btn-primary" style="font-size: 12px;">에디터편집</button>
+          </div>
+        </div>
+
+        <!-- Section 2: 고소취지 (AI Generated) -->
+        <div class="ai-block">
+          <div class="ai-block-header">
+            <input type="checkbox" id="chkSection2" checked>
+            <label for="chkSection2" class="ai-label">2. 고소취지</label>
+            <span class="ai-version">ver.2</span>
+          </div>
+          <div class="ai-block-content" contenteditable="true">
+            AI 프롬프트 답변 내용이 나옵니다. AI 프롬프트 답변 내용이 나옵니다. AI 프롬프트 답변 내용이 나옵니다. AI 프롬프트 답변 내용이 나옵니다.
+          </div>
+        </div>
+
+        <!-- Section 3: 범죄사실 -->
+        <div class="manual-block">
+          <div class="manual-block-header">
+            <input type="checkbox" id="chkSection3">
+            <label for="chkSection3" class="manual-label">3. 범죄사실 <span class="required">*</span></label>
+          </div>
+          <textarea id="txtCrimeFact" placeholder="입력하거나 프롬프트 답변 내용이 나옵니다. AI 프롬프트 답변 내용이 나옵니다. AI 프롬프트 답변 내용이 나옵니다. 세요."></textarea>
+        </div>
+
+        <!-- Section 4: 고소이유 -->
+        <div class="manual-block">
+          <div class="manual-block-header">
+            <input type="checkbox" id="chkSection4">
+            <label for="chkSection4" class="manual-label">4. 고소이유</label>
+          </div>
+          <textarea id="txtReason" placeholder="입력하세요."></textarea>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="editor-bottom">
+        <span style="font-size: 13px; color: var(--text-light);">전체 ▾</span>
+        <div class="d-flex gap-8">
+          <button class="btn-outline" style="font-size: 12px;">AI 재요청</button>
+          <button class="btn-primary" style="font-size: 12px;">에디터편집</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Right: Preview ===== -->
+    <div class="editor-right">
+      <div class="editor-right-header">
+        <h3>미리보기</h3>
+        <button class="btn-close-preview" title="닫기" style="background: none; border: none; font-size: 18px; color: var(--text-light); cursor: pointer;">&times;</button>
+      </div>
+
+      <div class="editor-right-body">
+        <div class="preview-doc">
+          <!-- Preview Section 1: 고소인 -->
+          <div class="preview-section">
+            <div class="preview-section-title">1. 고소인</div>
+            <table class="preview-field-table">
+              <tr>
+                <th>성명</th>
+                <td id="prevName">홍길동</td>
+              </tr>
+              <tr>
+                <th>주민등록번호</th>
+                <td id="prevSsn"></td>
+              </tr>
+              <tr>
+                <th>주소</th>
+                <td id="prevAddr"></td>
+              </tr>
+              <tr>
+                <th>직업</th>
+                <td id="prevJob"></td>
+              </tr>
+              <tr>
+                <th>사무실 주소</th>
+                <td id="prevOfficeAddr"></td>
+              </tr>
+              <tr class="phone-row">
+                <th style="padding: 10px 12px;">전화</th>
+                <td>
+                  <div class="phone-inner">
+                    <span id="prevPhoneMobile">휴대폰</span>
+                    <span id="prevPhoneHome">자택</span>
+                    <span id="prevPhoneOffice">사무실</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>이메일</th>
+                <td id="prevEmail"></td>
+              </tr>
+              <tr>
+                <th>기타</th>
+                <td id="prevEtc"></td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Preview Section 2: 고소취지 -->
+          <div class="preview-section">
+            <div class="preview-section-title">2. 고소취지</div>
+            <div class="preview-ai-text" id="prevSection2">
+              AI 프롬프트 답변 내용이 나옵니다, AI 프롬프트 답변 내용이 나옵니다, AI 프롬프트 답변 내용이 나옵니다,
+            </div>
+          </div>
+
+          <!-- Preview Section 3: 범죄사실 -->
+          <div class="preview-section">
+            <div class="preview-section-title">3. 범죄사실 <span style="color: #e74c3c;">*</span></div>
+            <div class="preview-manual-text" id="prevSection3"></div>
+          </div>
+
+          <!-- Preview Section 4: 고소이유 -->
+          <div class="preview-section">
+            <div class="preview-section-title">4. 고소이유</div>
+            <div class="preview-manual-text" id="prevSection4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  $(function() {
+    'use strict';
+
+    // ===========================
+    // Real-time Preview Sync
+    // ===========================
+    function updatePreview() {
+      // 성명
+      $('#prevName').text($('#inputName').val() || '');
+      // 주민등록번호
+      var ssn1 = $('#inputSsn1').val() || '';
+      var ssn2 = $('#inputSsn2').val() || '';
+      $('#prevSsn').text(ssn1 && ssn2 ? ssn1 + '-' + ssn2 : ssn1 + ssn2);
+      // 주소
+      $('#prevAddr').text($('#inputAddr').val() + ' ' + $('#inputAddrDetail').val());
+      // 직업
+      $('#prevJob').text($('#inputJob').val() || '');
+      // 이메일
+      $('#prevEmail').text($('#inputEmail').val() || '');
+      // 고소취지 (AI - contenteditable)
+      $('#prevSection2').html($('.ai-block-content').html());
+      // 범죄사실
+      $('#prevSection3').text($('#txtCrimeFact').val() || '');
+      // 고소이유
+      $('#prevSection4').text($('#txtReason').val() || '');
+    }
+
+    // Bind input events
+    $('.editor-left-body').on('input', 'input, textarea, [contenteditable]', function() {
+      updatePreview();
+    });
+
+    // Initial sync
+    updatePreview();
+
+    // ===========================
+    // Clear field buttons
+    // ===========================
+    $('.btn-clear-field').on('click', function() {
+      $(this).siblings('input').val('');
+      $(this).closest('.input-col').find('input').val('');
+      updatePreview();
+    });
+
+    // ===========================
+    // Add row button
+    // ===========================
+    $('.btn-add-row').on('click', function() {
+      var newRow = '<div class="form-row-item">' +
+        '<div class="label-col">입력</div>' +
+        '<div class="input-col d-flex align-center gap-8">' +
+        '<input type="text" placeholder="입력하세요">' +
+        '<button class="btn-clear-field"><i class="bi bi-x-circle"></i></button>' +
+        '</div></div>';
+      $(this).before(newRow);
+    });
+
+    // ===========================
+    // Preview panel toggle
+    // ===========================
+    $('.btn-close-preview').on('click', function() {
+      var $right = $('.editor-right');
+      if ($right.is(':visible')) {
+        $right.hide();
+        $('.editor-left').css('flex', '1');
+      } else {
+        $right.show();
+        $('.editor-left').css('flex', '1');
+      }
+    });
+  });
+  </script>
+</body>
+</html>

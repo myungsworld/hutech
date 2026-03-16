@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>창작작업실 - HuTech</title>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Pretendard Font -->
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <!-- Custom -->
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===== GNB ===== -->
+  <nav class="gnb">
+    <div class="gnb-logo">LOGO</div>
+    <ul class="gnb-menu">
+      <li><a href="index.html" class="active">창작작업실</a></li>
+      <li><a href="#">요금제</a></li>
+      <li><a href="#">고객센터</a></li>
+      <li><a href="#">회사소개</a></li>
+    </ul>
+    <div class="gnb-actions">
+      <button class="btn-icon"><i class="bi bi-person"></i></button>
+      <button class="btn-icon"><i class="bi bi-cart3"></i></button>
+      <button class="btn-icon"><i class="bi bi-gear"></i></button>
+    </div>
+  </nav>
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
+    <button class="sidebar-item active" title="홈"><i class="bi bi-house"></i></button>
+    <button class="sidebar-item" title="문서"><i class="bi bi-file-earmark-text"></i></button>
+    <button class="sidebar-item" title="히스토리"><i class="bi bi-clock-history"></i></button>
+    <button class="sidebar-item" title="즐겨찾기"><i class="bi bi-bookmark"></i></button>
+    <button class="sidebar-item" title="설정"><i class="bi bi-sliders"></i></button>
+  </aside>
+
+  <!-- ===== Main Content ===== -->
+  <main class="main-content">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="#">홈</a> &gt; <span>창작작업실</span>
+    </div>
+
+    <!-- Page Title + Actions -->
+    <div class="d-flex justify-between align-center mb-16">
+      <h1 class="page-title">창작작업실</h1>
+      <div class="top-actions">
+        <button class="btn-outline"><i class="bi bi-arrow-counterclockwise"></i> 임시저장</button>
+        <button class="btn-outline">카드</button>
+        <button class="btn-primary">게시</button>
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+      <button class="tab-item" style="color: var(--primary); font-weight: 700;">Youtube</button>
+      <button class="tab-item active">문서</button>
+      <button class="tab-item">리서치&분석</button>
+      <button class="tab-item">프로그래밍</button>
+      <button class="tab-item">이미지,디자인</button>
+      <button class="tab-item">음악</button>
+      <button class="tab-item">음성</button>
+      <button class="tab-item">기타</button>
+    </div>
+
+    <!-- Workflow Steps -->
+    <div class="workflow-steps">
+      <button class="workflow-btn primary">분류별 생성/텍스트 입력</button>
+      <button class="workflow-btn">내면의 양식 만들기</button>
+      <button class="workflow-btn">양식 생성 후 내용 작성</button>
+      <button class="workflow-btn">양식 만들기</button>
+      <button class="workflow-btn">내용 작성 후 감수 받기</button>
+      <button class="workflow-btn">관련 서비스 표시 영역</button>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel">
+      <!-- 카테고리 선택 -->
+      <div class="settings-row">
+        <span class="settings-label">카테고리 선택</span>
+        <select id="selCategory1">
+          <option>법률</option>
+          <option>교육</option>
+          <option>일반</option>
+        </select>
+        <select id="selCategory2">
+          <option>국내 법률</option>
+          <option>국제 법률</option>
+        </select>
+        <select id="selCategory3">
+          <option>고소장</option>
+          <option>소장</option>
+          <option>탄원서</option>
+        </select>
+        <button class="btn-search"><i class="bi bi-search"></i> 검색</button>
+      </div>
+
+      <!-- 원형 매체 -->
+      <div class="settings-row">
+        <span class="settings-label">원형 매체</span>
+        <div class="radio-group">
+          <label><input type="radio" name="media" checked> 매디어 사용</label>
+          <label><input type="radio" name="media"> 에디터 미사용</label>
+        </div>
+      </div>
+
+      <!-- 사용 AI -->
+      <div class="settings-row">
+        <span class="settings-label">사용 AI</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" checked> ChatGPT</label>
+          <label><input type="checkbox" checked> Gemini</label>
+          <label><input type="checkbox"> wrtn</label>
+          <label><input type="checkbox"> 다른 AI</label>
+          <label><input type="checkbox"> 다른 AI</label>
+          <label><input type="checkbox"> 다른 AI</label>
+        </div>
+      </div>
+
+      <!-- 화면 작업 요청 -->
+      <div class="settings-row">
+        <span class="settings-label">화면 작업 요청</span>
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">감수 요청</span>
+        <select>
+          <option>고급전문가</option>
+          <option>일반</option>
+        </select>
+        <select>
+          <option>2명</option>
+          <option>3명</option>
+          <option>5명</option>
+        </select>
+        <label style="font-size: 13px; color: var(--text-light);"><i class="bi bi-info-circle"></i></label>
+      </div>
+    </div>
+
+    <!-- Upload & AI Recommend Area -->
+    <div class="upload-area">
+      <!-- Left: Upload Zone -->
+      <div class="upload-zone" id="dropZone">
+        <span class="upload-icon">📎</span>
+        <p>파일 업로드 또는 AI 텍스트를 입력해 주세요.</p>
+        <div class="tooltip-box" style="display: none; top: -40px; left: 50%; transform: translateX(-50%);">
+          <div>첨부파일 그대로 사용</div>
+          <div>첨부파일 참조</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Recommend Buttons -->
+    <div class="ai-recommend">
+      <button class="ai-recommend-btn">AI 추천 관련 서식</button>
+      <button class="ai-recommend-btn">AI 추천 관련 서식</button>
+      <button class="ai-recommend-btn">AI 추천 관련 서식</button>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="chat-input-wrap">
+      <input type="text" placeholder="입력하세요">
+      <button class="btn-send"><i class="bi bi-arrow-up"></i></button>
+    </div>
+
+    <!-- File Tags -->
+    <div class="d-flex justify-between align-center">
+      <div class="file-tags">
+        <span class="file-tag">filename.pdf <span class="remove">&times;</span></span>
+        <span class="file-tag">filename.pdf <span class="remove">&times;</span></span>
+        <span class="file-tag">filename.pdf <span class="remove">&times;</span></span>
+      </div>
+      <button class="btn-outline">게시물보기</button>
+    </div>
+  </main>
+
+  <!-- ===== Scripts ===== -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
