@@ -2,10 +2,10 @@ $(function() {
   'use strict';
 
   // ===========================
-  // Category Tab Switching
+  // Category Tab Switching (pill style)
   // ===========================
-  $('.category-tabs .tab-item').on('click', function() {
-    $('.category-tabs .tab-item').removeClass('active');
+  $('.category-tabs .tab-pill').on('click', function() {
+    $('.category-tabs .tab-pill').removeClass('active');
     $(this).addClass('active');
   });
 
@@ -18,12 +18,49 @@ $(function() {
   });
 
   // ===========================
-  // Workflow Button Toggle
+  // Workflow Stepper
   // ===========================
-  $('.workflow-btn:not(.primary)').on('click', function() {
+  $('.step-item').on('click', function() {
+    var $items = $('.step-item');
+    var $connectors = $('.step-connector');
+    var idx = $items.index(this);
+
+    $items.removeClass('active');
+    $connectors.removeClass('active');
+
+    for (var i = 0; i <= idx; i++) {
+      $items.eq(i).addClass('active');
+    }
+    for (var j = 0; j < idx; j++) {
+      $connectors.eq(j).addClass('active');
+    }
+  });
+
+  // ===========================
+  // Settings Panel Toggle
+  // ===========================
+  $('#toggleSettings').on('click', function() {
+    var $body = $('#settingsBody');
+    var $icon = $(this).find('i');
+    $body.toggleClass('collapsed');
+    $icon.toggleClass('bi-chevron-up bi-chevron-down');
+  });
+
+  // ===========================
+  // Toggle Button Group
+  // ===========================
+  $('.toggle-btn').on('click', function() {
+    $(this).siblings().removeClass('active');
+    $(this).addClass('active');
+  });
+
+  // ===========================
+  // AI Chip Selection
+  // ===========================
+  $('.ai-chip').on('click', function() {
     $(this).toggleClass('selected');
-    $(this).css('border-color', $(this).hasClass('selected') ? 'var(--primary)' : '');
-    $(this).css('color', $(this).hasClass('selected') ? 'var(--primary)' : '');
+    var $input = $(this).find('input');
+    $input.prop('checked', !$input.prop('checked'));
   });
 
   // ===========================
@@ -33,44 +70,38 @@ $(function() {
 
   $dropZone.on('dragover', function(e) {
     e.preventDefault();
-    $(this).css('border-color', 'var(--primary)');
-    $(this).css('background', 'var(--primary-light)');
+    $(this).addClass('dragover');
   });
 
-  $dropZone.on('dragleave', function() {
-    $(this).css('border-color', '');
-    $(this).css('background', '');
-  });
-
-  $dropZone.on('drop', function(e) {
+  $dropZone.on('dragleave drop', function(e) {
     e.preventDefault();
-    $(this).css('border-color', '');
-    $(this).css('background', '');
-    var files = e.originalEvent.dataTransfer.files;
-    if (files.length > 0) {
-      addFileTags(files);
+    $(this).removeClass('dragover');
+    if (e.type === 'drop') {
+      var files = e.originalEvent.dataTransfer.files;
+      if (files.length > 0) {
+        addFileTags(files);
+      }
     }
   });
 
   $dropZone.on('click', function() {
-    var $input = $('<input type="file" multiple>');
+    var $input = $('<input type="file" multiple accept=".pdf,.docx,.txt,.png,.jpg">');
     $input.on('change', function() {
       addFileTags(this.files);
     });
     $input.trigger('click');
   });
 
-  // Tooltip on hover
-  $dropZone.on('mouseenter', function() {
-    $(this).find('.tooltip-box').fadeIn(150);
-  }).on('mouseleave', function() {
-    $(this).find('.tooltip-box').fadeOut(150);
-  });
-
   function addFileTags(files) {
-    var $container = $('.file-tags');
+    var $container = $('#fileTags');
     for (var i = 0; i < files.length; i++) {
-      var tag = '<span class="file-tag">' + files[i].name + ' <span class="remove">&times;</span></span>';
+      var ext = files[i].name.split('.').pop().toLowerCase();
+      var icon = ext === 'pdf' ? 'bi-file-pdf' : 'bi-file-earmark';
+      var tag = '<span class="file-tag">' +
+        '<i class="bi ' + icon + '"></i> ' +
+        files[i].name +
+        ' <button class="tag-remove">&times;</button>' +
+        '</span>';
       $container.append(tag);
     }
   }
@@ -78,42 +109,56 @@ $(function() {
   // ===========================
   // File Tag Remove
   // ===========================
-  $(document).on('click', '.file-tag .remove', function() {
-    $(this).parent().fadeOut(200, function() {
+  $(document).on('click', '.tag-remove', function(e) {
+    e.stopPropagation();
+    $(this).parent().fadeOut(150, function() {
       $(this).remove();
     });
   });
 
   // ===========================
-  // Chat Input - Enter to Send
+  // Chat Input - Auto resize textarea
   // ===========================
-  $('.chat-input-wrap input').on('keypress', function(e) {
-    if (e.which === 13) {
-      var text = $(this).val().trim();
-      if (text) {
-        alert('입력한 내용: ' + text);
-        $(this).val('');
-      }
+  var $textarea = $('#chatInput');
+
+  $textarea.on('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  });
+
+  $textarea.on('keydown', function(e) {
+    if (e.which === 13 && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
     }
   });
 
-  $('.chat-input-wrap .btn-send').on('click', function() {
-    var $input = $('.chat-input-wrap input');
-    var text = $input.val().trim();
+  $('.btn-send').on('click', function() {
+    sendMessage();
+  });
+
+  function sendMessage() {
+    var text = $textarea.val().trim();
     if (text) {
-      alert('입력한 내용: ' + text);
-      $input.val('');
-    }
-  });
-
-  // ===========================
-  // 문서 만들기 에디터 열기/닫기
-  // ===========================
-  // "양식 만들기" 또는 "내면의 양식 만들기" 버튼 클릭 시 에디터 열기
-  $('.workflow-btn').on('click', function() {
-    var text = $(this).text();
-    if (text === '내면의 양식 만들기' || text === '양식 만들기') {
+      // 에디터 페이지로 이동
       window.location.href = 'editor.html';
     }
+  }
+
+  // ===========================
+  // 워크플로우 step 2 클릭 시 에디터로
+  // ===========================
+  $('.step-item').on('click', function() {
+    var label = $(this).find('.step-label').text();
+    if (label === '양식 만들기' || label === '내용 작성') {
+      window.location.href = 'editor.html';
+    }
+  });
+
+  // ===========================
+  // Suggest card click
+  // ===========================
+  $('.suggest-card').on('click', function() {
+    window.location.href = 'editor.html';
   });
 });
