@@ -164,6 +164,13 @@
   align-items: center;
   gap: 5px;
 }
+.response-version {
+  font-size: 10px;
+  color: var(--text-light);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
 .response-meta {
   margin-left: auto;
   font-size: 11px;

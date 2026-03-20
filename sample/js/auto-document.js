@@ -13,18 +13,37 @@ $(function() {
   var aiResponses = {
     chatgpt: {
       title: '고소장',
-      content: '피고소인의 아래 범죄사실에 대하여 고소하오니 수사하여 엄벌에 처하여 주시기 바랍니다.\n\n' +
+      versions: [
+        '피고소인의 아래 범죄사실에 대하여 고소하오니 수사하여 엄벌에 처하여 주시기 바랍니다.\n\n' +
         '피고소인은 2024년 3월경부터 2024년 8월경까지 서울특별시 강남구 소재 ○○오피스텔에서, ' +
         '고소인의 저작물인 번역 원고를 무단으로 복제하여 제3자에게 판매하였습니다.\n\n' +
         '이는 저작권법 제136조 제1항 제1호에 해당하는 저작재산권 침해 행위로서, ' +
         '피고소인의 행위로 인해 고소인은 약 5,000만 원 상당의 재산적 손해를 입었습니다.\n\n' +
         '이에 피고소인을 저작권법 위반으로 고소하오니, 철저히 수사하여 주시기 바랍니다.',
+
+        '고소인은 피고소인의 저작권법 위반 행위에 대하여 아래와 같이 고소합니다.\n\n' +
+        '1. 고소 취지\n' +
+        '피고소인을 저작권법 제136조 제1항 위반 혐의로 처벌하여 주시기 바랍니다.\n\n' +
+        '2. 범죄사실\n' +
+        '피고소인은 2024. 3.경부터 같은 해 8.경까지 서울 강남구에 있는 자신의 사무실에서, ' +
+        '고소인이 창작한 전문 번역 원고 총 15건을 권리자인 고소인의 허락 없이 무단 복제한 뒤 ' +
+        '온라인 플랫폼을 통해 제3자에게 유상 배포하였습니다.\n\n' +
+        '3. 적용 법조\n' +
+        '저작권법 제136조 제1항 제1호 (저작재산권 침해)\n\n' +
+        '4. 입증 자료\n' +
+        '- 고소인 원본 원고 및 작업 이력 (증 제1호)\n' +
+        '- 피고소인 판매 내역 캡처 (증 제2호)\n' +
+        '- 피해 금액 산출 내역서 (증 제3호)'
+      ],
+      content: '',
       time: '3.2초',
-      tokens: '287'
+      tokens: '287',
+      versionIndex: 0
     },
     gemini: {
       title: '고소장',
-      content: '아래와 같이 피고소인의 범죄사실을 고소하오니, 수사 후 엄중 처벌하여 주시기 바랍니다.\n\n' +
+      versions: [
+        '아래와 같이 피고소인의 범죄사실을 고소하오니, 수사 후 엄중 처벌하여 주시기 바랍니다.\n\n' +
         '【범죄사실 요약】\n' +
         '피고소인은 2024년 3월부터 동년 8월까지 약 6개월간에 걸쳐, 고소인이 창작한 전문 번역 원고(총 15건)를 ' +
         '고소인의 동의 없이 복제·배포하여 부당이익을 취하였습니다.\n\n' +
@@ -34,12 +53,27 @@ $(function() {
         '【피해 규모】\n' +
         '- 직접 손해: 원고 판매 대금 약 3,500만원\n' +
         '- 간접 손해: 신뢰도 하락으로 인한 거래처 이탈 약 1,500만원',
+
+        '피고소인의 저작권법 위반 행위를 아래와 같이 고소합니다.\n\n' +
+        '【사건 경위】\n' +
+        '고소인은 전문 번역사로서 법률·기술 분야 번역 서비스를 제공하고 있으며, ' +
+        '피고소인은 고소인에게 번역을 의뢰한 고객입니다. 피고소인은 납품받은 번역물을 ' +
+        '계약 범위를 초과하여 무단 복제·판매하였습니다.\n\n' +
+        '【범죄 일시 및 장소】\n' +
+        '- 일시: 2024년 3월 ~ 2024년 8월\n' +
+        '- 장소: 서울특별시 강남구 소재 피고소인 사무실\n\n' +
+        '【피해 내역】\n' +
+        '번역 원고 15건 무단 복제·배포, 피해액 약 5,000만원'
+      ],
+      content: '',
       time: '2.8초',
-      tokens: '312'
+      tokens: '312',
+      versionIndex: 0
     },
     wrtn: {
       title: '고소장',
-      content: '존경하는 수사기관 귀중\n\n' +
+      versions: [
+        '존경하는 수사기관 귀중\n\n' +
         '고소인은 아래 범죄사실에 관하여 피고소인을 저작권법 위반으로 고소합니다.\n\n' +
         '1. 사건 개요\n' +
         '고소인은 전문 번역 서비스를 제공하는 번역사로서, 피고소인과 2024년 1월 번역 용역 계약을 체결한 바 있습니다. ' +
@@ -48,12 +82,26 @@ $(function() {
         '가. 피고소인은 2024년 3월경 고소인의 영한 번역 원고 10건을 무단 복제\n' +
         '나. 동년 5월경 상기 원고를 자신의 번역물로 위장하여 온라인 플랫폼에 게시\n' +
         '다. 동년 8월까지 약 5,000만원 상당의 부당이익 취득',
+
+        '수사기관 귀중\n\n' +
+        '아래 범죄사실을 고소하오니, 엄정히 수사하여 주시기 바랍니다.\n\n' +
+        '1. 당사자 관계\n' +
+        '고소인은 영한 전문 번역사이며, 피고소인은 2024년 1월 고소인에게 번역 용역을 의뢰한 자입니다.\n\n' +
+        '2. 범죄사실\n' +
+        '피고소인은 고소인이 납품한 번역 원고(법률 분야 15건)를 계약상 허용된 용도 이외에 ' +
+        '무단으로 복제하여 자신의 이름으로 온라인에서 판매하였습니다. ' +
+        '이로 인해 고소인은 약 5,000만원의 재산적 피해를 입었습니다.\n\n' +
+        '3. 관련 법조: 저작권법 제136조 제1항 제1호'
+      ],
+      content: '',
       time: '4.1초',
-      tokens: '298'
+      tokens: '298',
+      versionIndex: 0
     },
     claude: {
       title: '고소장',
-      content: '본 고소장은 피고소인의 저작권법 위반 행위에 대하여 엄정한 수사와 처벌을 구하기 위해 제출합니다.\n\n' +
+      versions: [
+        '본 고소장은 피고소인의 저작권법 위반 행위에 대하여 엄정한 수사와 처벌을 구하기 위해 제출합니다.\n\n' +
         '■ 고소 취지\n' +
         '피고소인을 저작권법 제136조 제1항 위반으로 고소하오니, 수사하여 처벌하여 주시기 바랍니다.\n\n' +
         '■ 범죄사실\n' +
@@ -65,10 +113,31 @@ $(function() {
         '2. 피고소인의 판매 게시물 스크린샷 (증거 2호)\n' +
         '3. 결제 내역 확인서 (증거 3호)\n' +
         '4. 고소인-피고소인 간 계약서 사본 (증거 4호)',
+
+        '■ 고소 요지\n' +
+        '피고소인의 저작재산권 침해 행위(저작권법 제136조 제1항)에 대하여 고소합니다.\n\n' +
+        '■ 사실관계\n' +
+        '고소인은 전문 번역사로서 법률·기술 분야의 번역 용역을 수행하고 있습니다. ' +
+        '피고소인은 2024년 1월 고소인에게 번역을 의뢰한 후, 납품받은 번역물 23건을 ' +
+        '2024년 3월부터 8월까지 고소인의 허락 없이 제3의 플랫폼에서 판매하였습니다.\n\n' +
+        '■ 피해 규모\n' +
+        '- 번역 원고 23건 (법률 15건 + 기술 8건)\n' +
+        '- 무단 판매 플랫폼: 3곳\n' +
+        '- 추정 피해액: 약 5,000만원\n\n' +
+        '■ 첨부 증거 목록\n' +
+        '증 제1호 내지 증 제4호 (별첨)'
+      ],
+      content: '',
       time: '3.7초',
-      tokens: '341'
+      tokens: '341',
+      versionIndex: 0
     }
   };
+
+  // Initialize content from first version
+  Object.keys(aiResponses).forEach(function(key) {
+    aiResponses[key].content = aiResponses[key].versions[0];
+  });
 
   var evaluationData = {
     overall: 91.3,
@@ -260,6 +329,7 @@ $(function() {
         $status.text('완료').addClass('done');
         generatedResponses[aiName] = data.content;
         updateResponseMeta(aiName);
+        updateVersionLabel(aiName);
       });
     } else {
       // Simulate background generation
@@ -290,12 +360,14 @@ $(function() {
     if (generatedResponses[aiName]) {
       $panel.html(generatedResponses[aiName].replace(/\n/g, '<br>'));
       updateResponseMeta(aiName);
+      updateVersionLabel(aiName);
     } else {
       var data = aiResponses[aiName];
       if (typingIntervals[aiName]) clearInterval(typingIntervals[aiName]);
       typingIntervals[aiName] = HuAnim.typeText($panel, data.content, 20, function() {
         generatedResponses[aiName] = data.content;
         updateResponseMeta(aiName);
+        updateVersionLabel(aiName);
         $('.ai-tab[data-ai="' + aiName + '"] .tab-status').text('완료').addClass('done');
       });
     }
@@ -353,14 +425,93 @@ $(function() {
   var selectedAI = 'chatgpt';
 
   // ===========================
+  // Step 2: Regenerate & Copy
+  // ===========================
+  $(document).on('click', '#btnRegenerate', function() {
+    var activeAI = $('.ai-tab.active').data('ai');
+    var data = aiResponses[activeAI];
+
+    // Cycle to next version
+    data.versionIndex = (data.versionIndex + 1) % data.versions.length;
+    data.content = data.versions[data.versionIndex];
+    generatedResponses[activeAI] = data.content;
+
+    // Show loading then retype
+    var $panel = $('#aiResponseContent');
+    $panel.html('<div style="text-align:center;padding:40px;color:var(--text-light);"><i class="bi bi-arrow-repeat" style="font-size:24px;animation:spin 0.8s linear infinite;display:inline-block;"></i><p style="margin-top:8px;font-size:13px;">재생성 중...</p></div>');
+
+    setTimeout(function() {
+      if (typingIntervals[activeAI]) clearInterval(typingIntervals[activeAI]);
+      typingIntervals[activeAI] = HuAnim.typeText($panel, data.content, 15, function() {
+        updateResponseMeta(activeAI);
+        updateVersionLabel(activeAI);
+      });
+    }, 1000);
+
+    HuAnim.toast('AI 답변을 재생성합니다', 'info');
+  });
+
+  $(document).on('click', '#btnCopyResponse', function() {
+    var activeAI = $('.ai-tab.active').data('ai');
+    var content = generatedResponses[activeAI] || aiResponses[activeAI].content;
+
+    // Copy to clipboard
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(content).then(function() {
+        HuAnim.toast('클립보드에 복사되었습니다', 'success');
+      });
+    } else {
+      // Fallback
+      var $temp = $('<textarea>').val(content).appendTo('body').select();
+      document.execCommand('copy');
+      $temp.remove();
+      HuAnim.toast('클립보드에 복사되었습니다', 'success');
+    }
+
+    // Visual feedback
+    var $btn = $('#btnCopyResponse');
+    $btn.html('<i class="bi bi-check-lg"></i> 복사됨');
+    setTimeout(function() {
+      $btn.html('<i class="bi bi-clipboard"></i> 복사');
+    }, 2000);
+  });
+
+  function updateVersionLabel(aiName) {
+    var data = aiResponses[aiName];
+    var ver = data.versionIndex + 1;
+    var total = data.versions.length;
+    $('#responseVersion').text('ver.' + ver + '/' + total);
+  }
+
+  // ===========================
   // Step 3: Editor
   // ===========================
   // Toolbar commands
   $(document).on('click', '.toolbar-btn[data-cmd]', function() {
     var cmd = $(this).data('cmd');
     var val = $(this).data('val') || null;
-    document.execCommand(cmd, false, val);
-    $(this).toggleClass('active');
+
+    // For formatBlock, toggle: if already applied, revert to <p>
+    if (cmd === 'formatBlock') {
+      var sel = window.getSelection();
+      if (sel.rangeCount > 0) {
+        var parentTag = sel.anchorNode.parentElement;
+        if (parentTag) parentTag = parentTag.closest(val) || parentTag.closest('h2, h3, blockquote');
+        if (parentTag && parentTag.tagName.toLowerCase() === val.toLowerCase().replace('<','').replace('>','')) {
+          document.execCommand('formatBlock', false, 'p');
+          $(this).removeClass('active');
+          return;
+        }
+      }
+      // Remove active from sibling format buttons
+      $('.toolbar-btn[data-cmd="formatBlock"]').removeClass('active');
+      document.execCommand(cmd, false, val);
+      $(this).addClass('active');
+    } else {
+      document.execCommand(cmd, false, val);
+      // Check if command is active
+      $(this).toggleClass('active', document.queryCommandState(cmd));
+    }
   });
 
   // Word count
