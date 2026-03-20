@@ -144,6 +144,15 @@ $(function() {
   $('#budgetRange').on('input', function() {
     var val = parseInt($(this).val());
     $('#budgetValue').text(val.toLocaleString() + '만원');
+
+    // Update tier label
+    var tier;
+    if (val >= 300) tier = 'S급 전문가 매칭 가능';
+    else if (val >= 200) tier = 'A급 전문가 매칭 가능';
+    else if (val >= 100) tier = 'B급 전문가 매칭 가능';
+    else tier = '기본 매칭';
+    $('#budgetTier').text(tier);
+
     updateCostEstimate();
   });
 
@@ -189,23 +198,60 @@ $(function() {
 
   // Submit form
   $('#btnSubmitRequest').on('click', function() {
-    // Update analysis section with current form values before transitioning
     var vals = getFormValues();
+    var cost = $('#costEstimateValue').text();
+    var budget = parseInt($('#budgetRange').val());
 
-    // Update analysis items with actual form values
+    // Determine difficulty, grade, time based on field + budget
+    var difficulty, diffBadge, grade, gradeBadge, estTime;
+
+    if (vals.field === '의학' || vals.field === '법률') {
+      difficulty = '상급'; diffBadge = '<span style="font-size:10px;background:#fff3e0;padding:2px 6px;border-radius:var(--radius-full);color:#f5a623;">HIGH</span>';
+    } else if (vals.field === '금융' || vals.field === '기술/IT') {
+      difficulty = '중급'; diffBadge = '<span style="font-size:10px;background:#e8f0fe;padding:2px 6px;border-radius:var(--radius-full);color:#4285f4;">MID</span>';
+    } else {
+      difficulty = '초급'; diffBadge = '<span style="font-size:10px;background:#e6f7f0;padding:2px 6px;border-radius:var(--radius-full);color:#10a37f;">LOW</span>';
+    }
+
+    if (budget >= 300) {
+      grade = 'S급 이상'; gradeBadge = '<span style="font-size:10px;background:#e6f7f0;padding:2px 6px;border-radius:var(--radius-full);color:#10a37f;">추천</span>';
+      estTime = '2~3일';
+    } else if (budget >= 150) {
+      grade = 'A급 이상'; gradeBadge = '<span style="font-size:10px;background:#e8f0fe;padding:2px 6px;border-radius:var(--radius-full);color:#4285f4;">적합</span>';
+      estTime = '3~5일';
+    } else {
+      grade = 'B급 이상'; gradeBadge = '';
+      estTime = '5~7일';
+    }
+
+    // Update analysis items
     var $items = $('.analysis-item');
     $items.eq(0).find('.analysis-value').text(vals.langPair);
-    $items.eq(1).find('.analysis-value').text(vals.fieldFull);
-    // Update cost in analysis
-    var cost = $('#costEstimateValue').text();
+    $items.eq(1).find('.analysis-value').html(vals.fieldFull);
+    $items.eq(2).find('.analysis-value').html(difficulty + ' ' + diffBadge);
+    $items.eq(3).find('.analysis-value').text(estTime);
+    $items.eq(4).find('.analysis-value').html(grade + ' ' + gradeBadge);
     $items.eq(5).find('.analysis-value').text(cost);
 
-    // Update confirmation section left side
+    // Update radar chart scores based on budget
+    analysisData.radarScores.accuracy = Math.min(95, 70 + budget / 10);
+    analysisData.radarScores.expertise = Math.min(98, 75 + budget / 8);
+    analysisData.radarScores.speed = budget >= 200 ? 85 : 65;
+    analysisData.radarScores.cost = Math.max(40, 100 - budget / 5);
+    analysisData.radarScores.review = Math.min(90, 60 + budget / 8);
+
+    // Update confirmation
     var $confirmRows = $('.confirm-detail-left .confirm-detail-row');
     $confirmRows.eq(0).find('.detail-value').text(vals.langPair);
     $confirmRows.eq(1).find('.detail-value').text(vals.fieldFull);
     $confirmRows.eq(3).find('.detail-value').text(vals.deadline);
     $confirmRows.eq(4).find('.detail-value').text(cost);
+
+    // Update document type in confirmation
+    var docType = $('.form-group select').filter(function() {
+      return $(this).closest('.form-group').find('label').text().indexOf('문서 유형') >= 0;
+    }).val() || '';
+    $confirmRows.eq(2).find('.detail-value').text(docType);
 
     HuAnim.showLoading('AI가 요청을 분석하고 있습니다', 2500, function() {
       goToSection(2);
