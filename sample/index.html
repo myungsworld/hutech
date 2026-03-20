@@ -3,267 +3,160 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>창작작업실 - HuTech</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>HuTech - 샘플 데모</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
-  <link href="css/style.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
+      background: #f7f7f8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+    }
+    .hub {
+      max-width: 640px;
+      width: 100%;
+      padding: 20px;
+    }
+    .hub-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .hub-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 24px;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .hub-logo .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: #f5a623;
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .hub-desc {
+      font-size: 14px;
+      color: #999;
+    }
+    .demo-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .demo-card {
+      background: #fff;
+      border: 1px solid #e8e8e8;
+      border-radius: 16px;
+      padding: 28px 24px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .demo-card:hover {
+      border-color: #f5a623;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+    .demo-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .demo-icon.doc { background: #fff8ed; color: #f5a623; }
+    .demo-icon.match { background: #e8f0fe; color: #4285f4; }
+    .demo-info { flex: 1; }
+    .demo-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .demo-subtitle {
+      font-size: 13px;
+      color: #999;
+      line-height: 1.5;
+    }
+    .demo-arrow {
+      color: #bbb;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .demo-card:hover .demo-arrow { color: #f5a623; }
+    .demo-tags {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .demo-tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #f7f7f8;
+      color: #666;
+      border: 1px solid #e8e8e8;
+    }
+  </style>
 </head>
 <body>
-
-  <!-- ===== GNB ===== -->
-  <nav class="gnb">
-    <div class="gnb-left">
-      <div class="gnb-logo">
+  <div class="hub">
+    <div class="hub-header">
+      <div class="hub-logo">
         <span class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></span>
         HuTech
       </div>
-    </div>
-    <ul class="gnb-menu">
-      <li><a href="auto-document.html" class="active">창작작업실</a></li>
-      <li><a href="matching.html">매칭</a></li>
-    </ul>
-    <div class="gnb-actions">
-      <button class="btn-icon" title="알림"><i class="bi bi-bell"></i></button>
-      <div class="gnb-avatar">M</div>
-    </div>
-  </nav>
-
-  <!-- ===== Sidebar ===== -->
-  <aside class="sidebar">
-    <div class="sidebar-top">
-      <button class="sidebar-item active" title="창작작업실" data-tooltip="창작작업실" onclick="location.href='auto-document.html'">
-        <i class="bi bi-pencil-square"></i>
-      </button>
-      <button class="sidebar-item" title="매칭" data-tooltip="매칭" onclick="location.href='matching.html'">
-        <i class="bi bi-people"></i>
-      </button>
-      <button class="sidebar-item" title="내 문서" data-tooltip="내 문서">
-        <i class="bi bi-file-earmark-text"></i>
-      </button>
-    </div>
-  </aside>
-
-  <!-- ===== Main Content ===== -->
-  <main class="main-content">
-    <!-- Breadcrumb -->
-    <div class="breadcrumb-nav">
-      <a href="#"><i class="bi bi-house-door"></i></a>
-      <i class="bi bi-chevron-right"></i>
-      <span>창작작업실</span>
+      <p class="hub-desc">샘플 데모</p>
     </div>
 
-    <!-- Page Header -->
-    <div class="page-header">
-      <div class="page-header-left">
-        <h1 class="page-title">창작작업실</h1>
-        <span class="page-badge">Beta</span>
-      </div>
-      <div class="top-actions">
-        <button class="btn-ghost"><i class="bi bi-clock-history"></i> 임시저장</button>
-        <button class="btn-ghost"><i class="bi bi-grid"></i> 카드</button>
-        <button class="btn-primary"><i class="bi bi-send"></i> 게시</button>
-      </div>
+    <div class="demo-cards">
+      <a href="auto-document.html" class="demo-card">
+        <div class="demo-icon doc"><i class="bi bi-file-earmark-text"></i></div>
+        <div class="demo-info">
+          <div class="demo-title">자동문서 프로세스</div>
+          <div class="demo-subtitle">업로드 → AI 생성 & 비교 → 에디팅 → AI 평가 → 출력</div>
+          <div class="demo-tags">
+            <span class="demo-tag">멀티 AI 비교</span>
+            <span class="demo-tag">리치 에디터</span>
+            <span class="demo-tag">AI 품질 평가</span>
+          </div>
+        </div>
+        <span class="demo-arrow"><i class="bi bi-chevron-right"></i></span>
+      </a>
+
+      <a href="matching.html" class="demo-card">
+        <div class="demo-icon match"><i class="bi bi-people"></i></div>
+        <div class="demo-info">
+          <div class="demo-title">AI 전문가 매칭</div>
+          <div class="demo-subtitle">의뢰 등록 → AI 분석 → 전문가 매칭 → 매칭 확정</div>
+          <div class="demo-tags">
+            <span class="demo-tag">AI 분석</span>
+            <span class="demo-tag">적합도 점수</span>
+            <span class="demo-tag">자동 매칭</span>
+          </div>
+        </div>
+        <span class="demo-arrow"><i class="bi bi-chevron-right"></i></span>
+      </a>
     </div>
-
-    <!-- Category Tabs (Notion/wrtn style pill tabs) -->
-    <div class="category-tabs-wrap">
-      <div class="category-tabs">
-        <button class="tab-pill highlight"><i class="bi bi-youtube"></i> Youtube</button>
-        <button class="tab-pill active"><i class="bi bi-file-text"></i> 문서</button>
-        <button class="tab-pill"><i class="bi bi-search"></i> 리서치&분석</button>
-        <button class="tab-pill"><i class="bi bi-code-slash"></i> 프로그래밍</button>
-        <button class="tab-pill"><i class="bi bi-image"></i> 이미지,디자인</button>
-        <button class="tab-pill"><i class="bi bi-music-note-beamed"></i> 음악</button>
-        <button class="tab-pill"><i class="bi bi-mic"></i> 음성</button>
-        <button class="tab-pill"><i class="bi bi-three-dots"></i> 기타</button>
-      </div>
-    </div>
-
-    <!-- Workflow Steps (stepper style) -->
-    <div class="workflow-stepper">
-      <button class="step-item active">
-        <span class="step-num">1</span>
-        <span class="step-label">분류별 생성/텍스트 입력</span>
-      </button>
-      <div class="step-connector active"></div>
-      <button class="step-item">
-        <span class="step-num">2</span>
-        <span class="step-label">양식 만들기</span>
-      </button>
-      <div class="step-connector"></div>
-      <button class="step-item">
-        <span class="step-num">3</span>
-        <span class="step-label">내용 작성</span>
-      </button>
-      <div class="step-connector"></div>
-      <button class="step-item">
-        <span class="step-num">4</span>
-        <span class="step-label">감수 받기</span>
-      </button>
-      <div class="step-connector"></div>
-      <button class="step-item">
-        <span class="step-num">5</span>
-        <span class="step-label">게시/출력</span>
-      </button>
-    </div>
-
-    <!-- Settings Panel (card style) -->
-    <div class="settings-card">
-      <div class="settings-card-header">
-        <h3><i class="bi bi-sliders2"></i> 작업 설정</h3>
-        <button class="btn-ghost btn-sm" id="toggleSettings"><i class="bi bi-chevron-up"></i></button>
-      </div>
-      <div class="settings-card-body" id="settingsBody">
-        <!-- 카테고리 선택 -->
-        <div class="setting-group">
-          <label class="setting-label">카테고리</label>
-          <div class="setting-controls">
-            <select class="form-select-custom">
-              <option>법률</option>
-              <option>교육</option>
-              <option>일반</option>
-            </select>
-            <select class="form-select-custom">
-              <option>국내 법률</option>
-              <option>국제 법률</option>
-            </select>
-            <select class="form-select-custom">
-              <option>고소장</option>
-              <option>소장</option>
-              <option>탄원서</option>
-            </select>
-            <button class="btn-icon-sm"><i class="bi bi-search"></i></button>
-          </div>
-        </div>
-
-        <!-- 원형 매체 -->
-        <div class="setting-group">
-          <label class="setting-label">원형 매체</label>
-          <div class="setting-controls">
-            <div class="toggle-group">
-              <button class="toggle-btn active">매디어 사용</button>
-              <button class="toggle-btn">에디터 미사용</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 사용 AI -->
-        <div class="setting-group">
-          <label class="setting-label">사용 AI</label>
-          <div class="setting-controls">
-            <div class="ai-chip-group">
-              <label class="ai-chip selected">
-                <input type="checkbox" checked>
-                <span class="chip-dot" style="background: #10a37f;"></span> ChatGPT
-              </label>
-              <label class="ai-chip selected">
-                <input type="checkbox" checked>
-                <span class="chip-dot" style="background: #4285f4;"></span> Gemini
-              </label>
-              <label class="ai-chip">
-                <input type="checkbox">
-                <span class="chip-dot" style="background: #d33717;"></span> wrtn
-              </label>
-              <label class="ai-chip">
-                <input type="checkbox">
-                <span class="chip-dot" style="background: #7c3aed;"></span> Claude
-              </label>
-              <label class="ai-chip">
-                <input type="checkbox">
-                <span class="chip-dot" style="background: #222;"></span> 기타
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <!-- 감수 요청 -->
-        <div class="setting-group">
-          <label class="setting-label">감수 요청</label>
-          <div class="setting-controls">
-            <select class="form-select-custom">
-              <option>고급전문가</option>
-              <option>일반</option>
-            </select>
-            <select class="form-select-custom" style="width: 80px;">
-              <option>2명</option>
-              <option>3명</option>
-              <option>5명</option>
-            </select>
-            <span class="info-badge" title="감수 인원에 따라 비용이 달라집니다"><i class="bi bi-info-circle"></i></span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Upload & AI Input Area (ChatGPT style) -->
-    <div class="ai-workspace">
-      <!-- Upload Zone -->
-      <div class="upload-dropzone" id="dropZone">
-        <div class="dropzone-inner">
-          <div class="dropzone-icon">
-            <i class="bi bi-cloud-arrow-up"></i>
-          </div>
-          <p class="dropzone-text">파일을 드래그하거나 클릭하여 업로드</p>
-          <p class="dropzone-sub">PDF, DOCX, TXT, 이미지 파일 지원</p>
-          <div class="dropzone-actions">
-            <button class="btn-outline-sm">첨부파일 그대로 사용</button>
-            <button class="btn-outline-sm">첨부파일 참조</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- AI Recommend Cards -->
-      <div class="ai-suggest-cards">
-        <div class="suggest-card">
-          <div class="suggest-icon"><i class="bi bi-file-earmark-ruled"></i></div>
-          <div class="suggest-text">
-            <strong>AI 추천 관련 서식</strong>
-            <span>고소장 양식 자동 생성</span>
-          </div>
-          <i class="bi bi-arrow-right"></i>
-        </div>
-        <div class="suggest-card">
-          <div class="suggest-icon"><i class="bi bi-translate"></i></div>
-          <div class="suggest-text">
-            <strong>AI 추천 관련 서식</strong>
-            <span>법률 번역 문서 서식</span>
-          </div>
-          <i class="bi bi-arrow-right"></i>
-        </div>
-        <div class="suggest-card">
-          <div class="suggest-icon"><i class="bi bi-shield-check"></i></div>
-          <div class="suggest-text">
-            <strong>AI 추천 관련 서식</strong>
-            <span>전문가 감수 요청 양식</span>
-          </div>
-          <i class="bi bi-arrow-right"></i>
-        </div>
-      </div>
-
-      <!-- Chat Input (ChatGPT / wrtn style) -->
-      <div class="chat-input-container">
-        <div class="chat-input-box">
-          <button class="btn-attach" title="파일 첨부"><i class="bi bi-paperclip"></i></button>
-          <textarea id="chatInput" rows="1" placeholder="무엇이든 입력하세요. AI가 문서를 생성해드립니다..."></textarea>
-          <div class="chat-input-actions">
-            <button class="btn-send" title="전송"><i class="bi bi-arrow-up"></i></button>
-          </div>
-        </div>
-        <div class="chat-input-footer">
-          <div class="file-tags" id="fileTags">
-            <span class="file-tag"><i class="bi bi-file-pdf"></i> filename.pdf <button class="tag-remove">&times;</button></span>
-            <span class="file-tag"><i class="bi bi-file-pdf"></i> filename.pdf <button class="tag-remove">&times;</button></span>
-            <span class="file-tag"><i class="bi bi-file-pdf"></i> filename.pdf <button class="tag-remove">&times;</button></span>
-          </div>
-          <button class="btn-ghost btn-sm">게시물보기 <i class="bi bi-arrow-up-right"></i></button>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/app.js"></script>
+  </div>
 </body>
 </html>
