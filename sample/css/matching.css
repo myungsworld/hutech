@@ -98,6 +98,18 @@
   font-size: 18px;
   color: var(--primary);
   flex-shrink: 0;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  transition: var(--transition);
+}
+.lang-pair .lang-arrow:hover {
+  background: var(--primary-light);
+  transform: scale(1.1);
 }
 .lang-pair label {
   font-size: 12px;

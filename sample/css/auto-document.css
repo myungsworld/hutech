@@ -2,6 +2,11 @@
    Auto Document Demo - Page Specific Styles
    =========================== */
 
+/* Override main-content width for auto-document (editor needs more space) */
+.main-content {
+  max-width: 1200px;
+}
+
 /* Step Sections */
 .step-section {
   display: none;
@@ -203,7 +208,8 @@
   gap: 2px;
   padding: 8px 16px;
   border-bottom: 1px solid var(--border-light);
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 }
 .toolbar-btn {
   width: 32px;

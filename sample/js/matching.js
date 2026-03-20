@@ -146,8 +146,130 @@ $(function() {
     $('#budgetValue').text(val.toLocaleString() + '만원');
   });
 
+  // Language swap button
+  $(document).on('click', '.lang-arrow', function() {
+    var $selects = $(this).closest('.lang-pair').find('select');
+    if ($selects.length === 2) {
+      var srcIdx = $selects.eq(0).prop('selectedIndex');
+      var tgtIdx = $selects.eq(1).prop('selectedIndex');
+      var srcVal = $selects.eq(0).val();
+      var tgtVal = $selects.eq(1).val();
+
+      // Find matching options in the other select and swap
+      var $srcOptions = $selects.eq(0).find('option');
+      var $tgtOptions = $selects.eq(1).find('option');
+
+      // Try to find tgtVal in source select, srcVal in target select
+      var newSrcIdx = -1;
+      var newTgtIdx = -1;
+      $srcOptions.each(function(i) {
+        if ($(this).val() === tgtVal) newSrcIdx = i;
+      });
+      $tgtOptions.each(function(i) {
+        if ($(this).val() === srcVal) newTgtIdx = i;
+      });
+
+      if (newSrcIdx >= 0) $selects.eq(0).prop('selectedIndex', newSrcIdx);
+      if (newTgtIdx >= 0) $selects.eq(1).prop('selectedIndex', newTgtIdx);
+
+      updateSkillTags();
+      HuAnim.toast('언어 쌍이 변경되었습니다', 'info');
+    }
+  });
+
+  // Skill tag removal
+  $(document).on('click', '.remove-tag', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).closest('.skill-tag').fadeOut(150, function() { $(this).remove(); });
+  });
+
+  // Update skill tags based on form values
+  function updateSkillTags() {
+    var srcLang = $('.lang-pair select').eq(0).find('option:selected').text();
+    var tgtLang = $('.lang-pair select').eq(1).find('option:selected').text();
+    var field = $('.form-group select').filter(function() {
+      return $(this).closest('.form-group').find('label').text().indexOf('전문 분야') >= 0;
+    }).val() || '법률';
+    var subField = $('.form-group select').filter(function() {
+      return $(this).closest('.form-group').find('label').text().indexOf('세부 분야') >= 0;
+    }).val() || '';
+
+    // Extract short language names
+    var srcShort = srcLang.replace(/\(.*\)/, '').trim().split(' ')[0];
+    var tgtShort = tgtLang.replace(/\(.*\)/, '').trim().split(' ')[0];
+
+    // Build tags array
+    var tags = [];
+    tags.push(field + ' 번역');
+    if (subField) tags.push(subField);
+    tags.push(srcShort + '-' + tgtShort + ' 번역');
+    // Add a document type tag
+    var docType = $('.form-group select').filter(function() {
+      return $(this).closest('.form-group').find('label').text().indexOf('문서 유형') >= 0;
+    }).val() || '';
+    if (docType) tags.push(docType);
+
+    var $wrap = $('.tag-input-wrap');
+    $wrap.empty();
+    tags.forEach(function(tag) {
+      $wrap.append('<span class="skill-tag">' + tag + ' <button class="remove-tag">&times;</button></span>');
+    });
+  }
+
+  // Update tags when form fields change
+  $(document).on('change', '.form-group select', function() {
+    var label = $(this).closest('.form-group').find('label').text();
+    if (label.indexOf('전문 분야') >= 0 || label.indexOf('세부 분야') >= 0 || label.indexOf('문서 유형') >= 0) {
+      updateSkillTags();
+    }
+  });
+  $(document).on('change', '.lang-pair select', function() {
+    updateSkillTags();
+  });
+
+  // Helper: get current form values for analysis
+  function getFormValues() {
+    var srcLang = $('.lang-pair select').eq(0).find('option:selected').text().replace(/\(.*\)/, '').trim();
+    var tgtLang = $('.lang-pair select').eq(1).find('option:selected').text().replace(/\(.*\)/, '').trim();
+    var field = $('.form-group select').filter(function() {
+      return $(this).closest('.form-group').find('label').text().indexOf('전문 분야') >= 0;
+    }).val() || '법률';
+    var subField = $('.form-group select').filter(function() {
+      return $(this).closest('.form-group').find('label').text().indexOf('세부 분야') >= 0;
+    }).val() || '';
+    var budget = $('#budgetValue').text() || '200만원';
+    var deadline = $('input[type="date"]').val() || '';
+
+    return {
+      srcLang: srcLang,
+      tgtLang: tgtLang,
+      langPair: srcLang + ' → ' + tgtLang,
+      field: field,
+      subField: subField,
+      fieldFull: subField ? field + ' (' + subField + ')' : field,
+      budget: budget,
+      deadline: deadline
+    };
+  }
+
   // Submit form
   $('#btnSubmitRequest').on('click', function() {
+    // Update analysis section with current form values before transitioning
+    var vals = getFormValues();
+
+    // Update analysis items with actual form values
+    var $items = $('.analysis-item');
+    $items.eq(0).find('.analysis-value').text(vals.langPair);
+    $items.eq(1).find('.analysis-value').text(vals.fieldFull);
+
+    // Update confirmation section left side
+    var $confirmRows = $('.confirm-detail-left .confirm-detail-row');
+    $confirmRows.eq(0).find('.detail-value').text(vals.langPair);
+    $confirmRows.eq(1).find('.detail-value').text(vals.fieldFull);
+    $confirmRows.eq(3).find('.detail-value').text(vals.deadline);
+    $confirmRows.eq(4).find('.detail-value').text(vals.budget);
+
     HuAnim.showLoading('AI가 요청을 분석하고 있습니다', 2500, function() {
       goToSection(2);
     });

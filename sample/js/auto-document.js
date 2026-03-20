@@ -486,32 +486,82 @@ $(function() {
   // ===========================
   // Step 3: Editor
   // ===========================
+  // Helper: update all toolbar button active states based on actual document state
+  function updateToolbarState() {
+    $('.toolbar-btn[data-cmd]').each(function() {
+      var cmd = $(this).data('cmd');
+      var val = $(this).data('val') || null;
+
+      if (cmd === 'formatBlock') {
+        // Check if current block matches this button's format
+        var sel = window.getSelection();
+        var isActive = false;
+        if (sel.rangeCount > 0) {
+          var node = sel.anchorNode;
+          if (node && node.nodeType === 3) node = node.parentElement;
+          if (node) {
+            var tagName = val.replace(/[<>]/g, '').toLowerCase();
+            var block = node.closest(tagName);
+            if (block) isActive = true;
+          }
+        }
+        $(this).toggleClass('active', isActive);
+      } else if (cmd === 'justifyLeft' || cmd === 'justifyCenter' || cmd === 'justifyRight') {
+        $(this).toggleClass('active', document.queryCommandState(cmd));
+      } else {
+        // bold, italic, underline, strikeThrough, insertUnorderedList, insertOrderedList
+        $(this).toggleClass('active', document.queryCommandState(cmd));
+      }
+    });
+  }
+
   // Toolbar commands
   $(document).on('click', '.toolbar-btn[data-cmd]', function() {
     var cmd = $(this).data('cmd');
     var val = $(this).data('val') || null;
 
-    // For formatBlock, toggle: if already applied, revert to <p>
+    // Ensure focus stays in the editor
+    var $editor = $('#editorContent');
+    if (!$editor.is(':focus')) {
+      $editor.focus();
+    }
+
     if (cmd === 'formatBlock') {
+      // Toggle: if already that format, revert to <p>
       var sel = window.getSelection();
+      var tagName = val.replace(/[<>]/g, '').toLowerCase();
+      var isAlready = false;
+
       if (sel.rangeCount > 0) {
-        var parentTag = sel.anchorNode.parentElement;
-        if (parentTag) parentTag = parentTag.closest(val) || parentTag.closest('h2, h3, blockquote');
-        if (parentTag && parentTag.tagName.toLowerCase() === val.toLowerCase().replace('<','').replace('>','')) {
-          document.execCommand('formatBlock', false, 'p');
-          $(this).removeClass('active');
-          return;
+        var node = sel.anchorNode;
+        if (node && node.nodeType === 3) node = node.parentElement;
+        if (node) {
+          var block = node.closest(tagName);
+          if (block) isAlready = true;
         }
       }
-      // Remove active from sibling format buttons
-      $('.toolbar-btn[data-cmd="formatBlock"]').removeClass('active');
-      document.execCommand(cmd, false, val);
-      $(this).addClass('active');
+
+      if (isAlready) {
+        document.execCommand('formatBlock', false, 'p');
+      } else {
+        document.execCommand('formatBlock', false, val);
+      }
+    } else if (cmd === 'justifyLeft' || cmd === 'justifyCenter' || cmd === 'justifyRight') {
+      // Alignment: execCommand toggles internally; just execute
+      document.execCommand(cmd, false, null);
     } else {
+      // bold, italic, underline, strikeThrough, insertUnorderedList, insertOrderedList
+      // All of these toggle natively via execCommand
       document.execCommand(cmd, false, val);
-      // Check if command is active
-      $(this).toggleClass('active', document.queryCommandState(cmd));
     }
+
+    // Update all toolbar button states after the command
+    updateToolbarState();
+  });
+
+  // Update toolbar state when selection changes or user types
+  $(document).on('keyup mouseup', '#editorContent', function() {
+    updateToolbarState();
   });
 
   // Word count
