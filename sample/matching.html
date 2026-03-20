@@ -157,24 +157,10 @@
             <input type="date" value="2024-10-01">
           </div>
 
-          <!-- Budget -->
-          <div class="form-group full-width">
-            <label>예산 범위</label>
-            <div class="budget-range">
-              <span class="budget-min">50만원</span>
-              <input type="range" id="budgetRange" min="50" max="500" value="200" step="10">
-              <span class="budget-max">500만원</span>
-            </div>
-            <div class="budget-display">
-              <span class="budget-value" id="budgetValue">200만원</span>
-              <span class="budget-tier" id="budgetTier">A급 전문가 매칭 가능</span>
-            </div>
-          </div>
-
           <!-- Description -->
           <div class="form-group full-width">
             <label>상세 설명</label>
-            <textarea placeholder="번역이 필요한 문서의 내용, 특이사항, 요구사항 등을 자세히 적어주세요...">저작권 침해 관련 고소장 번역이 필요합니다. 원문은 한국어로 작성된 법률 문서이며, 영문 번역본이 필요합니다. 법률 용어의 정확한 번역과 법적 효력을 갖춘 문서 형식이 중요합니다. 총 23건의 문서이며, 긴급한 건 5건을 우선 처리해주셔야 합니다.</textarea>
+            <textarea id="matchDescription" placeholder="번역이 필요한 문서의 내용, 특이사항, 요구사항 등을 자세히 적어주세요...">저작권 침해 관련 고소장/소장 번역이 필요합니다. 원문은 English로 작성된 법률 문서이며, 한국어 번역본이 필요합니다. 법률 용어의 정확한 번역과 법적 효력을 갖춘 문서 형식이 중요합니다.</textarea>
           </div>
 
         </div>
@@ -329,7 +315,7 @@
             <div class="confirm-detail-row"><span class="detail-label">전문 분야</span><span class="detail-value">법률 (저작권)</span></div>
             <div class="confirm-detail-row"><span class="detail-label">문서 유형</span><span class="detail-value">고소장</span></div>
             <div class="confirm-detail-row"><span class="detail-label">희망 납기일</span><span class="detail-value">2024-10-01</span></div>
-            <div class="confirm-detail-row"><span class="detail-label">예산</span><span class="detail-value">200만원</span></div>
+            <div class="confirm-detail-row"><span class="detail-label">예상 비용</span><span class="detail-value" id="confirmCost">150만원</span></div>
           </div>
           <div class="confirm-detail-right">
             <h4>선택된 전문가</h4>

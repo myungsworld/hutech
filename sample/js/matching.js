@@ -140,19 +140,54 @@ $(function() {
   // ===========================
   // Section 1: Request Form
   // ===========================
-  // Budget slider
-  $('#budgetRange').on('input', function() {
-    var val = parseInt($(this).val());
-    $('#budgetValue').text(val.toLocaleString() + '만원');
 
-    // Update tier label
-    var tier;
-    if (val >= 300) tier = 'S급 전문가 매칭 가능';
-    else if (val >= 200) tier = 'A급 전문가 매칭 가능';
-    else if (val >= 100) tier = 'B급 전문가 매칭 가능';
-    else tier = '기본 매칭';
-    $('#budgetTier').text(tier);
+  // Dynamic description update
+  var descTemplates = {
+    '법률': {
+      '저작권법': '저작권 침해 관련 {docType} 번역이 필요합니다. 원문은 {srcLang}로 작성된 법률 문서이며, {tgtLang} 번역본이 필요합니다. 법률 용어의 정확한 번역과 법적 효력을 갖춘 문서 형식이 중요합니다.',
+      '계약서': '기업 간 계약서 {docType} 번역이 필요합니다. {srcLang}에서 {tgtLang}로의 정확한 법률 용어 번역과 계약 조항의 법적 효력 유지가 핵심입니다.',
+      '특허': '특허 출원 관련 {docType} 번역이 필요합니다. {srcLang} 원문을 {tgtLang}로 번역하며, 특허 명세서의 기술적 정확성이 중요합니다.',
+      '형사/민사': '형사/민사 소송 관련 {docType} 번역이 필요합니다. {srcLang} 법률 문서를 {tgtLang}로 번역하며, 소송 절차에 맞는 형식을 갖춰야 합니다.',
+      '국제법': '국제법 관련 {docType} 번역이 필요합니다. {srcLang}에서 {tgtLang}로의 번역이며, 국제 조약 및 협정의 전문 용어 처리가 중요합니다.'
+    },
+    '의학': '의학/임상 분야 {docType} 번역이 필요합니다. {srcLang}에서 {tgtLang}로의 번역이며, 의학 전문 용어의 정확성과 규제 문서 형식 준수가 필수입니다.',
+    '기술/IT': 'IT/기술 분야 {docType} 번역이 필요합니다. {srcLang} 기술 문서를 {tgtLang}로 번역하며, API 문서, UI 텍스트 등의 현지화 경험이 필요합니다.',
+    '금융': '금융 분야 {docType} 번역이 필요합니다. {srcLang}에서 {tgtLang}로의 번역이며, 재무제표, 투자 보고서 등의 금융 전문 용어 처리가 중요합니다.',
+    '마케팅': '마케팅 자료 {docType} 번역이 필요합니다. {srcLang}에서 {tgtLang}로의 번역이며, 브랜드 톤앤매너를 유지하면서 현지화하는 것이 핵심입니다.',
+    '학술': '학술 논문 {docType} 번역이 필요합니다. {srcLang}에서 {tgtLang}로의 번역이며, 학술 인용 형식과 전문 용어의 정확성이 요구됩니다.',
+    '일반': '일반 문서 {docType} 번역이 필요합니다. {srcLang}에서 {tgtLang}로의 번역이며, 자연스러운 문장 구성을 원합니다.'
+  };
 
+  function updateDescription() {
+    var srcLang = $('#srcLang option:selected').text().replace(/\(.*\)/, '').trim();
+    var tgtLang = $('#tgtLang option:selected').text().replace(/\(.*\)/, '').trim();
+    var field = $('.form-group select').filter(function() {
+      return $(this).closest('.form-group').find('label').text().indexOf('전문 분야') >= 0;
+    }).val() || '일반';
+    var subField = $('.form-group select').filter(function() {
+      return $(this).closest('.form-group').find('label').text().indexOf('세부 분야') >= 0;
+    }).val() || '';
+    var docType = $('.form-group select').filter(function() {
+      return $(this).closest('.form-group').find('label').text().indexOf('문서 유형') >= 0;
+    }).val() || '문서';
+
+    var template;
+    if (typeof descTemplates[field] === 'object') {
+      template = descTemplates[field][subField] || Object.values(descTemplates[field])[0];
+    } else {
+      template = descTemplates[field] || descTemplates['일반'];
+    }
+
+    var desc = template
+      .replace(/\{srcLang\}/g, srcLang)
+      .replace(/\{tgtLang\}/g, tgtLang)
+      .replace(/\{docType\}/g, docType);
+
+    $('#matchDescription').val(desc);
+  }
+
+  $(document).on('change', '#matchSection1 select', function() {
+    updateDescription();
     updateCostEstimate();
   });
 
@@ -165,6 +200,7 @@ $(function() {
     document.getElementById('srcLang').value = tgtVal;
     document.getElementById('tgtLang').value = srcVal;
     updateCostEstimate();
+    updateDescription();
     HuAnim.toast(
       $('#srcLang option:selected').text() + ' → ' + $('#tgtLang option:selected').text(),
       'info'
@@ -181,7 +217,6 @@ $(function() {
     var subField = $('.form-group select').filter(function() {
       return $(this).closest('.form-group').find('label').text().indexOf('세부 분야') >= 0;
     }).val() || '';
-    var budget = $('#budgetValue').text() || '200만원';
     var deadline = $('input[type="date"]').val() || '';
 
     return {
@@ -191,7 +226,6 @@ $(function() {
       field: field,
       subField: subField,
       fieldFull: subField ? field + ' (' + subField + ')' : field,
-      budget: budget,
       deadline: deadline
     };
   }
@@ -200,28 +234,22 @@ $(function() {
   $('#btnSubmitRequest').on('click', function() {
     var vals = getFormValues();
     var cost = $('#costEstimateValue').text();
-    var budget = parseInt($('#budgetRange').val());
 
-    // Determine difficulty, grade, time based on field + budget
+    // Determine difficulty, grade, time based on field
     var difficulty, diffBadge, grade, gradeBadge, estTime;
 
     if (vals.field === '의학' || vals.field === '법률') {
       difficulty = '상급'; diffBadge = '<span style="font-size:10px;background:#fff3e0;padding:2px 6px;border-radius:var(--radius-full);color:#f5a623;">HIGH</span>';
+      grade = 'S급 이상'; gradeBadge = '<span style="font-size:10px;background:#e6f7f0;padding:2px 6px;border-radius:var(--radius-full);color:#10a37f;">추천</span>';
+      estTime = '3~5일';
     } else if (vals.field === '금융' || vals.field === '기술/IT') {
       difficulty = '중급'; diffBadge = '<span style="font-size:10px;background:#e8f0fe;padding:2px 6px;border-radius:var(--radius-full);color:#4285f4;">MID</span>';
+      grade = 'A급 이상'; gradeBadge = '<span style="font-size:10px;background:#e8f0fe;padding:2px 6px;border-radius:var(--radius-full);color:#4285f4;">적합</span>';
+      estTime = '5~7일';
     } else {
       difficulty = '초급'; diffBadge = '<span style="font-size:10px;background:#e6f7f0;padding:2px 6px;border-radius:var(--radius-full);color:#10a37f;">LOW</span>';
-    }
-
-    if (budget >= 300) {
-      grade = 'S급 이상'; gradeBadge = '<span style="font-size:10px;background:#e6f7f0;padding:2px 6px;border-radius:var(--radius-full);color:#10a37f;">추천</span>';
-      estTime = '2~3일';
-    } else if (budget >= 150) {
-      grade = 'A급 이상'; gradeBadge = '<span style="font-size:10px;background:#e8f0fe;padding:2px 6px;border-radius:var(--radius-full);color:#4285f4;">적합</span>';
-      estTime = '3~5일';
-    } else {
       grade = 'B급 이상'; gradeBadge = '';
-      estTime = '5~7일';
+      estTime = '7~10일';
     }
 
     // Update analysis items
@@ -233,13 +261,6 @@ $(function() {
     $items.eq(4).find('.analysis-value').html(grade + ' ' + gradeBadge);
     $items.eq(5).find('.analysis-value').text(cost);
 
-    // Update radar chart scores based on budget
-    analysisData.radarScores.accuracy = Math.min(95, 70 + budget / 10);
-    analysisData.radarScores.expertise = Math.min(98, 75 + budget / 8);
-    analysisData.radarScores.speed = budget >= 200 ? 85 : 65;
-    analysisData.radarScores.cost = Math.max(40, 100 - budget / 5);
-    analysisData.radarScores.review = Math.min(90, 60 + budget / 8);
-
     // Update confirmation
     var $confirmRows = $('.confirm-detail-left .confirm-detail-row');
     $confirmRows.eq(0).find('.detail-value').text(vals.langPair);
@@ -247,7 +268,6 @@ $(function() {
     $confirmRows.eq(3).find('.detail-value').text(vals.deadline);
     $confirmRows.eq(4).find('.detail-value').text(cost);
 
-    // Update document type in confirmation
     var docType = $('.form-group select').filter(function() {
       return $(this).closest('.form-group').find('label').text().indexOf('문서 유형') >= 0;
     }).val() || '';
