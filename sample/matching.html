@@ -93,18 +93,22 @@
           <div class="form-group full-width">
             <label>번역 언어 <span class="required">*</span></label>
             <div class="lang-pair">
-              <select>
+              <select id="srcLang">
                 <option>English (영어)</option>
+                <option>한국어</option>
                 <option>日本語 (일본어)</option>
                 <option>中文 (중국어)</option>
                 <option>Deutsch (독일어)</option>
                 <option>Français (프랑스어)</option>
               </select>
               <span class="lang-arrow"><i class="bi bi-arrow-left-right"></i></span>
-              <select>
+              <select id="tgtLang">
                 <option>한국어</option>
                 <option>English (영어)</option>
                 <option>日本語 (일본어)</option>
+                <option>中文 (중국어)</option>
+                <option>Deutsch (독일어)</option>
+                <option>Français (프랑스어)</option>
               </select>
             </div>
           </div>
@@ -169,16 +173,6 @@
             <textarea placeholder="번역이 필요한 문서의 내용, 특이사항, 요구사항 등을 자세히 적어주세요...">저작권 침해 관련 고소장 번역이 필요합니다. 원문은 한국어로 작성된 법률 문서이며, 영문 번역본이 필요합니다. 법률 용어의 정확한 번역과 법적 효력을 갖춘 문서 형식이 중요합니다. 총 23건의 문서이며, 긴급한 건 5건을 우선 처리해주셔야 합니다.</textarea>
           </div>
 
-          <!-- Required Skills -->
-          <div class="form-group full-width">
-            <label>필요 역량 (태그)</label>
-            <div class="tag-input-wrap">
-              <span class="skill-tag">법률 번역 <button class="remove-tag">&times;</button></span>
-              <span class="skill-tag">저작권 <button class="remove-tag">&times;</button></span>
-              <span class="skill-tag">영한 번역 <button class="remove-tag">&times;</button></span>
-              <span class="skill-tag">고소장 <button class="remove-tag">&times;</button></span>
-            </div>
-          </div>
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">

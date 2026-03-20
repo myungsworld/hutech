@@ -148,84 +148,13 @@ $(function() {
 
   // Language swap button
   $(document).on('click', '.lang-arrow', function() {
-    var $selects = $(this).closest('.lang-pair').find('select');
-    if ($selects.length === 2) {
-      var srcIdx = $selects.eq(0).prop('selectedIndex');
-      var tgtIdx = $selects.eq(1).prop('selectedIndex');
-      var srcVal = $selects.eq(0).val();
-      var tgtVal = $selects.eq(1).val();
-
-      // Find matching options in the other select and swap
-      var $srcOptions = $selects.eq(0).find('option');
-      var $tgtOptions = $selects.eq(1).find('option');
-
-      // Try to find tgtVal in source select, srcVal in target select
-      var newSrcIdx = -1;
-      var newTgtIdx = -1;
-      $srcOptions.each(function(i) {
-        if ($(this).val() === tgtVal) newSrcIdx = i;
-      });
-      $tgtOptions.each(function(i) {
-        if ($(this).val() === srcVal) newTgtIdx = i;
-      });
-
-      if (newSrcIdx >= 0) $selects.eq(0).prop('selectedIndex', newSrcIdx);
-      if (newTgtIdx >= 0) $selects.eq(1).prop('selectedIndex', newTgtIdx);
-
-      updateSkillTags();
-      HuAnim.toast('언어 쌍이 변경되었습니다', 'info');
-    }
-  });
-
-  // Skill tag removal
-  $(document).on('click', '.remove-tag', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    $(this).closest('.skill-tag').fadeOut(150, function() { $(this).remove(); });
-  });
-
-  // Update skill tags based on form values
-  function updateSkillTags() {
-    var srcLang = $('.lang-pair select').eq(0).find('option:selected').text();
-    var tgtLang = $('.lang-pair select').eq(1).find('option:selected').text();
-    var field = $('.form-group select').filter(function() {
-      return $(this).closest('.form-group').find('label').text().indexOf('전문 분야') >= 0;
-    }).val() || '법률';
-    var subField = $('.form-group select').filter(function() {
-      return $(this).closest('.form-group').find('label').text().indexOf('세부 분야') >= 0;
-    }).val() || '';
-
-    // Extract short language names
-    var srcShort = srcLang.replace(/\(.*\)/, '').trim().split(' ')[0];
-    var tgtShort = tgtLang.replace(/\(.*\)/, '').trim().split(' ')[0];
-
-    // Build tags array
-    var tags = [];
-    tags.push(field + ' 번역');
-    if (subField) tags.push(subField);
-    tags.push(srcShort + '-' + tgtShort + ' 번역');
-    // Add a document type tag
-    var docType = $('.form-group select').filter(function() {
-      return $(this).closest('.form-group').find('label').text().indexOf('문서 유형') >= 0;
-    }).val() || '';
-    if (docType) tags.push(docType);
-
-    var $wrap = $('.tag-input-wrap');
-    $wrap.empty();
-    tags.forEach(function(tag) {
-      $wrap.append('<span class="skill-tag">' + tag + ' <button class="remove-tag">&times;</button></span>');
-    });
-  }
-
-  // Update tags when form fields change
-  $(document).on('change', '.form-group select', function() {
-    var label = $(this).closest('.form-group').find('label').text();
-    if (label.indexOf('전문 분야') >= 0 || label.indexOf('세부 분야') >= 0 || label.indexOf('문서 유형') >= 0) {
-      updateSkillTags();
-    }
-  });
-  $(document).on('change', '.lang-pair select', function() {
-    updateSkillTags();
+    var $src = $('#srcLang');
+    var $tgt = $('#tgtLang');
+    var srcIdx = $src.prop('selectedIndex');
+    var tgtIdx = $tgt.prop('selectedIndex');
+    $src.prop('selectedIndex', tgtIdx);
+    $tgt.prop('selectedIndex', srcIdx);
+    HuAnim.toast('언어 쌍이 변경되었습니다', 'info');
   });
 
   // Helper: get current form values for analysis
