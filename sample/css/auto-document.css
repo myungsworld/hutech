@@ -717,6 +717,55 @@
 }
 
 /* ===========================
+   Evaluation Progress Steps
+   =========================== */
+.eval-progress-steps {
+  margin-top: 20px;
+  text-align: left;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.eval-progress-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  transition: all 0.3s;
+}
+.eval-progress-step.active {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+.eval-progress-step.done {
+  color: var(--accent);
+}
+.eval-progress-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--border-light);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.eval-progress-step.active .eval-progress-icon {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.eval-progress-step.done .eval-progress-icon {
+  background: #e6f7f0;
+  color: #10a37f;
+}
+
+/* ===========================
    Side Panel (내 문서)
    =========================== */
 .side-panel {
@@ -915,36 +964,6 @@
   animation: blink 0.8s infinite;
   color: var(--primary);
   font-weight: 700;
-}
-
-/* ===========================
-   Feature 2: Version History Pills
-   =========================== */
-.version-pills {
-  display: flex;
-  gap: 4px;
-  margin-left: auto;
-}
-.version-pill {
-  padding: 2px 8px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  background: var(--bg-white);
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-light);
-  cursor: pointer;
-  transition: var(--transition);
-  white-space: nowrap;
-}
-.version-pill:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-}
-.version-pill.active {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
 }
 
 /* ===========================

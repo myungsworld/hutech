@@ -207,14 +207,66 @@ $(function() {
   $(document).on('click', '[data-next-step]', function() {
     var nextStep = parseInt($(this).attr('data-next-step'));
     if (nextStep === 2) {
-      // Step 1 → 2: Show loading first
       HuAnim.showLoading('AI가 문서를 분석하고 생성 중입니다', 2500, function() {
         goToStep(2);
+      });
+    } else if (nextStep === 4) {
+      showEvalProgress(function() {
+        goToStep(4);
       });
     } else {
       goToStep(nextStep);
     }
   });
+
+  // Multi-step evaluation progress (like matching)
+  function showEvalProgress(callback) {
+    var steps = [
+      { text: '문서 내용 분석 중...', delay: 900 },
+      { text: '법률 용어 검증 중...', delay: 800 },
+      { text: '양식 적합성 평가 중...', delay: 800 },
+      { text: '문장 품질 평가 중...', delay: 700 },
+      { text: '종합 점수 산출 완료!', delay: 500 }
+    ];
+
+    var stepsHtml = '';
+    steps.forEach(function(s, i) {
+      stepsHtml += '<div class="eval-progress-step" data-step="' + i + '">' +
+        '<div class="eval-progress-icon"><span>' + (i + 1) + '</span></div>' +
+        '<span>' + s.text + '</span></div>';
+    });
+
+    var $overlay = $('<div class="loading-overlay active">' +
+      '<div class="loading-content">' +
+      '<div class="loading-spinner"></div>' +
+      '<p class="loading-text">AI 품질 평가</p>' +
+      '<div class="eval-progress-steps">' + stepsHtml + '</div>' +
+      '</div></div>');
+
+    $('body').append($overlay);
+
+    var idx = 0;
+    function advance() {
+      if (idx >= steps.length) {
+        setTimeout(function() {
+          $overlay.removeClass('active');
+          setTimeout(function() { $overlay.remove(); if (callback) callback(); }, 300);
+        }, 400);
+        return;
+      }
+      var $step = $overlay.find('[data-step="' + idx + '"]');
+      $step.addClass('active');
+      $step.find('.eval-progress-icon').html('<div class="loading-spinner" style="width:18px;height:18px;border-width:2px;margin:0;"></div>');
+
+      setTimeout(function() {
+        $step.removeClass('active').addClass('done');
+        $step.find('.eval-progress-icon').html('<i class="bi bi-check-lg"></i>');
+        idx++;
+        advance();
+      }, steps[idx].delay);
+    }
+    setTimeout(advance, 300);
+  }
 
   $(document).on('click', '[data-prev-step]', function() {
     goToStep(parseInt($(this).attr('data-prev-step')));
@@ -589,8 +641,6 @@ $(function() {
       // Save as v1 original
       versionHistory = [htmlContent];
       currentVersion = 0;
-      $('.version-pill').removeClass('active');
-      $('.version-pill').eq(0).addClass('active');
 
       // Open AI assistant by default
       var $assist = $('#aiChatAssist');
@@ -671,7 +721,7 @@ $(function() {
       $('.eval-bar-fill').css({ transition: 'width 1.5s ease-out' });
     }, 50);
 
-    HuAnim.showLoading('AI가 재평가 중입니다', 2000, function() {
+    showEvalProgress(function() {
       startEvaluation();
       HuAnim.toast('재평가가 완료되었습니다', 'success');
     });
@@ -689,9 +739,26 @@ $(function() {
     }, 500);
   }
 
-  // Output actions
+  // Output actions - PDF download
   $(document).on('click', '#btnDownloadPdf', function() {
-    HuAnim.toast('PDF 다운로드가 시작됩니다', 'info');
+    var $btn = $(this);
+    $btn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> 생성 중...');
+
+    var element = document.querySelector('.output-paper');
+    html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(function(canvas) {
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF('p', 'mm', 'a4');
+      var imgData = canvas.toDataURL('image/png');
+      var pdfWidth = pdf.internal.pageSize.getWidth();
+      var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('고소장_HuTech.pdf');
+      $btn.prop('disabled', false).html('<i class="bi bi-file-pdf"></i> PDF 다운로드');
+      HuAnim.toast('PDF가 다운로드되었습니다', 'success');
+    }).catch(function() {
+      $btn.prop('disabled', false).html('<i class="bi bi-file-pdf"></i> PDF 다운로드');
+      HuAnim.toast('PDF 생성에 실패했습니다', 'warning');
+    });
   });
   $(document).on('click', '#btnPrint', function() {
     window.print();
@@ -836,13 +903,7 @@ $(function() {
       $('#editorContent').html(pendingSuggestionContent.replace(/\n/g, '<br>'));
       $('#previewContent').html(pendingSuggestionContent.replace(/\n/g, '<br>'));
 
-      // Update version pills
       currentVersion++;
-      var vLabel = currentVersion === 1 ? 'v2 · AI 수정' : 'v' + (currentVersion + 1) + ' · AI 수정';
-      $('.version-pill').removeClass('active');
-      if (currentVersion < 3) {
-        $('.version-pill').eq(currentVersion).addClass('active');
-      }
 
       // Update word count
       var text = $('#editorContent').text();
@@ -852,30 +913,6 @@ $(function() {
     $('#aiChatSuggestion').fadeOut(200);
     pendingSuggestionContent = null;
     HuAnim.toast('수정사항이 적용되었습니다', 'success');
-  });
-
-  // ===========================
-  // Feature 2: Version History
-  // ===========================
-  $(document).on('click', '.version-pill', function() {
-    var ver = parseInt($(this).data('version'));
-    $('.version-pill').removeClass('active');
-    $(this).addClass('active');
-
-    if (ver === 1 && versionHistory.length > 0) {
-      // Restore original
-      $('#editorContent').html(versionHistory[0]);
-      $('#previewContent').html(versionHistory[0]);
-      HuAnim.toast('v1 원본으로 되돌렸습니다', 'info');
-    } else if (ver === 2 && versionHistory.length > 1) {
-      $('#editorContent').html(versionHistory[1] || versionHistory[0]);
-      $('#previewContent').html(versionHistory[1] || versionHistory[0]);
-      HuAnim.toast('v2 AI 수정 버전으로 되돌렸습니다', 'info');
-    } else if (ver <= currentVersion + 1) {
-      HuAnim.toast('v' + ver + ' 버전입니다', 'info');
-    } else {
-      HuAnim.toast('아직 이 버전이 없습니다', 'info');
-    }
   });
 
   // ===========================
