@@ -776,26 +776,6 @@ $(function() {
     submitStep1();
   });
 
-  // ===========================
-  // My Documents Panel Toggle
-  // ===========================
-  $('#btnMyDocs').on('click', function() {
-    var $panel = $('#myDocsPanel');
-    if ($panel.is(':visible')) {
-      $panel.hide();
-    } else {
-      $panel.show();
-    }
-  });
-
-  // ===========================
-  // Category Tab Switching
-  // ===========================
-  $('.category-tabs .tab-pill').on('click', function() {
-    $('.category-tabs .tab-pill').removeClass('active');
-    $(this).addClass('active');
-  });
-
   // Sidebar
   $('.sidebar-item').on('click', function() {
     $('.sidebar-item').removeClass('active');

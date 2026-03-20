@@ -35,40 +35,8 @@
     <div class="sidebar-top">
       <button class="sidebar-item active" title="문서 작성" data-tooltip="문서 작성" onclick="location.href='auto-document.html'"><i class="bi bi-pencil-square"></i></button>
       <button class="sidebar-item" title="매칭" data-tooltip="매칭" onclick="location.href='matching.html'"><i class="bi bi-people"></i></button>
-      <button class="sidebar-item" title="내 문서" data-tooltip="내 문서" id="btnMyDocs"><i class="bi bi-file-earmark-text"></i></button>
     </div>
   </aside>
-
-  <!-- My Documents Panel (sidebar click) -->
-  <div class="side-panel" id="myDocsPanel" style="display:none;">
-    <div class="side-panel-header">
-      <h4>내 문서</h4>
-      <button class="btn-close-panel" onclick="$('#myDocsPanel').hide();">&times;</button>
-    </div>
-    <div class="side-panel-body">
-      <div class="doc-list-item">
-        <i class="bi bi-file-earmark-text" style="color:var(--primary);"></i>
-        <div>
-          <div style="font-size:13px;font-weight:600;">고소장_저작권침해_v2</div>
-          <div style="font-size:11px;color:var(--text-light);">2024.09.15 · AI 평가 91.3점</div>
-        </div>
-      </div>
-      <div class="doc-list-item">
-        <i class="bi bi-file-earmark-text" style="color:var(--text-light);"></i>
-        <div>
-          <div style="font-size:13px;font-weight:600;">계약서_번역_초안</div>
-          <div style="font-size:11px;color:var(--text-light);">2024.09.12 · 작성 중</div>
-        </div>
-      </div>
-      <div class="doc-list-item">
-        <i class="bi bi-file-earmark-text" style="color:var(--text-light);"></i>
-        <div>
-          <div style="font-size:13px;font-weight:600;">특허문서_영한번역</div>
-          <div style="font-size:11px;color:var(--text-light);">2024.09.08 · 완료</div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- ===== Main Content ===== -->
   <main class="main-content">
@@ -86,10 +54,6 @@
       <div class="page-header-left">
         <h1 class="page-title">문서 작성</h1>
         <span class="page-badge">Beta</span>
-      </div>
-      <div class="top-actions">
-        <button class="btn-ghost"><i class="bi bi-clock-history"></i> 임시저장</button>
-        <button class="btn-primary"><i class="bi bi-send"></i> 게시</button>
       </div>
     </div>
 
@@ -360,7 +324,6 @@
       <div style="display:flex;justify-content:space-between;margin-top:16px;">
         <button class="btn-ghost" data-prev-step="2"><i class="bi bi-chevron-left"></i> 이전</button>
         <div style="display:flex;gap:8px;">
-          <button class="btn-ghost"><i class="bi bi-floppy"></i> 임시저장</button>
           <button class="btn-primary" data-next-step="4"><i class="bi bi-stars"></i> AI 평가 받기 <i class="bi bi-chevron-right"></i></button>
         </div>
       </div>
