@@ -325,6 +325,30 @@
             <div id="editorContent" contenteditable="true" data-placeholder="AI가 생성한 내용을 편집하세요..."></div>
           </div>
 
+          <!-- AI Chat Assistant -->
+          <div class="ai-chat-assist" id="aiChatAssist">
+            <div class="ai-chat-toggle" id="aiChatToggle">
+              <i class="bi bi-stars" style="color:var(--primary);"></i>
+              <span>AI 어시스턴트</span>
+              <i class="bi bi-chevron-up ai-chat-chevron"></i>
+            </div>
+            <div class="ai-chat-body" id="aiChatBody" style="display:none;">
+              <div class="ai-chat-suggestion" id="aiChatSuggestion" style="display:none;">
+                <div class="ai-suggestion-bubble" id="aiSuggestionText"></div>
+                <button class="btn-apply-suggestion" id="btnApplySuggestion"><i class="bi bi-check-lg"></i> 적용</button>
+              </div>
+              <div class="ai-chat-input-row">
+                <input type="text" id="aiChatInput" placeholder="AI에게 수정 요청..." />
+                <button class="btn-ai-send" id="btnAiChatSend"><i class="bi bi-arrow-up"></i></button>
+              </div>
+              <div class="ai-chat-presets">
+                <button class="ai-preset-btn" data-preset="이 문단을 더 공식적으로 바꿔줘">공식적으로</button>
+                <button class="ai-preset-btn" data-preset="문장을 더 간결하게 줄여줘">간결하게</button>
+                <button class="ai-preset-btn" data-preset="법률 용어를 더 정확하게 수정해줘">법률 용어 수정</button>
+              </div>
+            </div>
+          </div>
+
           <!-- Status Bar -->
           <div class="editor-statusbar">
             <span>글자 수: <strong id="charCount">0</strong> | 단어 수: <strong id="wordCount">0</strong></span>
@@ -338,6 +362,11 @@
             <i class="bi bi-eye" style="color:var(--text-light);"></i>
             미리보기
             <span style="font-size:10px;background:var(--bg-light);padding:2px 8px;border-radius:var(--radius-full);color:var(--text-light);font-weight:500;">실시간</span>
+            <div class="version-pills" id="versionPills">
+              <button class="version-pill active" data-version="1">v1 · 원본</button>
+              <button class="version-pill" data-version="2">v2 · AI 수정</button>
+              <button class="version-pill" data-version="3">v3 · 직접 편집</button>
+            </div>
           </div>
           <div class="editor-preview-body">
             <div class="preview-paper" id="previewContent">
@@ -370,6 +399,31 @@
         <div class="overall-value" id="overallValue">0.0%</div>
         <div class="overall-label">종합 점수</div>
         <span class="overall-grade">A+</span>
+      </div>
+
+      <!-- Version Comparison -->
+      <div class="version-compare-card" id="versionCompareCard" style="display:none;">
+        <div class="version-compare-header">
+          <span><i class="bi bi-arrow-left-right"></i> 이전 버전과 비교</span>
+        </div>
+        <div class="version-compare-bars">
+          <div class="compare-bar-row">
+            <span class="compare-bar-label">이전 버전</span>
+            <div class="compare-bar-track">
+              <div class="compare-bar-fill prev" id="prevVersionBar" style="width:0%;">78.5%</div>
+            </div>
+          </div>
+          <div class="compare-bar-row">
+            <span class="compare-bar-label">현재 버전</span>
+            <div class="compare-bar-track">
+              <div class="compare-bar-fill current" id="curVersionBar" style="width:0%;">91.3%</div>
+            </div>
+          </div>
+        </div>
+        <div class="compare-diff-badge" id="compareDiffBadge">+12.8%</div>
+      </div>
+      <div style="text-align:center;margin-bottom:16px;">
+        <button class="btn-ghost btn-sm" id="toggleVersionCompare"><i class="bi bi-arrow-left-right"></i> 이전 버전 비교</button>
       </div>
 
       <!-- Score Cards -->

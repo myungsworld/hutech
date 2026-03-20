@@ -579,6 +579,282 @@
 }
 
 /* ===========================
+   Feature 4: Expert Detail Modal
+   =========================== */
+.expert-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  animation: fadeInOverlay 0.2s ease-out;
+}
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.expert-modal {
+  background: var(--bg-white);
+  border-radius: var(--radius-lg);
+  width: 480px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  animation: slideUpModal 0.3s ease-out;
+}
+@keyframes slideUpModal {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.expert-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: var(--bg-light);
+  border-radius: 50%;
+  font-size: 16px;
+  color: var(--text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.expert-modal-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-dark);
+}
+.expert-modal-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+}
+.expert-modal-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.expert-modal-info h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.expert-modal-info p {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+.expert-modal-score {
+  font-size: 12px;
+  color: var(--text-gray);
+}
+.expert-modal-score strong {
+  color: var(--primary);
+  font-size: 14px;
+}
+.expert-modal-section {
+  margin-bottom: 16px;
+}
+.expert-modal-section h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-gray);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.modal-portfolio-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 12px;
+}
+.modal-portfolio-item:last-child {
+  border-bottom: none;
+}
+.modal-portfolio-item .project-name {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.modal-portfolio-item .project-date {
+  color: var(--text-light);
+}
+.modal-review-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.modal-review-item:last-child {
+  border-bottom: none;
+}
+.modal-review-stars {
+  color: #f5a623;
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.modal-review-text {
+  font-size: 12px;
+  color: var(--text-mid);
+  line-height: 1.5;
+}
+.modal-review-author {
+  font-size: 11px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+.expert-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+}
+
+/* ===========================
+   Feature 5: Live Cost Estimate
+   =========================== */
+.cost-estimate-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #fff8ed, #fff);
+  border: 1px solid rgba(245,166,35,0.3);
+  border-radius: var(--radius-md);
+  margin-top: 16px;
+  transition: all 0.3s ease;
+}
+.cost-estimate-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.cost-estimate-body {
+  flex: 1;
+}
+.cost-estimate-label {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 500;
+}
+.cost-estimate-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary);
+  transition: all 0.3s ease;
+}
+.cost-estimate-detail {
+  font-size: 11px;
+  color: var(--text-light);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ===========================
+   Feature 6: Matching Progress Steps
+   =========================== */
+.matching-progress-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,0.95);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.matching-progress-content {
+  text-align: center;
+  max-width: 320px;
+}
+.matching-progress-steps {
+  text-align: left;
+  margin-top: 20px;
+}
+.matching-step-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+.matching-step-item.active {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+.matching-step-item.done {
+  color: var(--accent);
+}
+.matching-step-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+.matching-step-item.active .matching-step-icon {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.matching-step-item.done .matching-step-icon {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.matching-step-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border-light);
+  border-top: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===========================
    Responsive
    =========================== */
 @media (max-width: 768px) {
@@ -604,5 +880,9 @@
   }
   .lang-pair {
     flex-wrap: wrap;
+  }
+  .expert-modal {
+    width: 95vw;
+    padding: 20px;
   }
 }

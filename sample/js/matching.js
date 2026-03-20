@@ -144,6 +144,7 @@ $(function() {
   $('#budgetRange').on('input', function() {
     var val = parseInt($(this).val());
     $('#budgetValue').text(val.toLocaleString() + '만원');
+    updateCostEstimate();
   });
 
   // Language swap button
@@ -252,9 +253,9 @@ $(function() {
     }, 300);
   }
 
-  // Next from analysis
+  // Next from analysis - Feature 6: use multi-step progress
   $(document).on('click', '#btnStartMatching', function() {
-    HuAnim.showLoading('AI가 최적의 전문가를 매칭하고 있습니다', 3000, function() {
+    showMatchingProgress(function() {
       goToSection(3);
     });
   });
@@ -323,11 +324,116 @@ $(function() {
     });
   }
 
-  // Expert card click → confirmation
+  // ===========================
+  // Feature 4: Expert Detail Modal
+  // ===========================
+  var expertPortfolios = [
+    [
+      { name: '국제저작권 분쟁 고소장 번역', date: '2024.08' },
+      { name: '특허침해 소송 관련 법률 문서', date: '2024.06' },
+      { name: '한미 FTA 계약서 번역', date: '2024.03' }
+    ],
+    [
+      { name: '특허출원 명세서 영한번역', date: '2024.07' },
+      { name: '국제중재 판정문 번역', date: '2024.05' },
+      { name: '기업 M&A 계약서', date: '2024.02' }
+    ],
+    [
+      { name: '형사고소장 작성 및 번역', date: '2024.09' },
+      { name: '민사소장 영문 번역', date: '2024.07' },
+      { name: '법원 판결문 번역', date: '2024.04' }
+    ],
+    [
+      { name: '학술논문 영한 번역', date: '2024.08' },
+      { name: '의학 임상시험 문서 감수', date: '2024.06' },
+      { name: '법률 자문서 번역', date: '2024.04' }
+    ],
+    [
+      { name: '일본어 계약서 번역', date: '2024.09' },
+      { name: '영문 NDA 계약서 한글 번역', date: '2024.07' },
+      { name: '다국어 마케팅 자료', date: '2024.05' }
+    ]
+  ];
+
+  var expertReviews = [
+    [
+      { stars: 5, text: '법률 용어가 정확하고, 원문의 뉘앙스를 잘 살려주셨습니다. 재의뢰 의사 100%입니다.', author: '법률사무소 대표 A' },
+      { stars: 5, text: '긴급 건이었는데 빠르게 처리해주셔서 감사합니다. 품질도 매우 만족스럽습니다.', author: '기업 법무팀 B' }
+    ],
+    [
+      { stars: 5, text: '특허 관련 전문 용어 처리가 뛰어납니다. 꼼꼼한 검토까지 해주셔서 좋았습니다.', author: '특허법인 C' },
+      { stars: 4, text: '전반적으로 만족하며, 국제법 분야에서도 신뢰할 수 있는 번역가입니다.', author: '로펌 D' }
+    ],
+    [
+      { stars: 4, text: '고소장 양식에 맞게 잘 작성해주셨습니다. 소통이 원활했습니다.', author: '개인 의뢰인 E' },
+      { stars: 5, text: '작업 속도가 빠르면서도 정확도가 높아 여러 번 의뢰하고 있습니다.', author: '법률사무소 F' }
+    ],
+    [
+      { stars: 4, text: '감수 품질이 좋습니다. 세심한 부분까지 체크해주셔서 감사합니다.', author: '연구소 G' },
+      { stars: 4, text: '학술 번역 경험이 풍부하여 전문 용어 처리가 정확합니다.', author: '대학교수 H' }
+    ],
+    [
+      { stars: 4, text: '다국어 번역이 가능해서 편리합니다. 일본어 번역 품질도 좋았습니다.', author: '무역회사 I' },
+      { stars: 4, text: '계약서 형식에 맞게 잘 번역해주셨습니다. 추천합니다.', author: '스타트업 J' }
+    ]
+  ];
+
   var selectedExpert = null;
+  var selectedExpertIndex = null;
+
+  // Expert card click → show modal
   $(document).on('click', '.expert-card', function() {
-    selectedExpert = experts[parseInt($(this).data('expert'))];
-    goToSection(4);
+    var idx = parseInt($(this).data('expert'));
+    var expert = experts[idx];
+    selectedExpertIndex = idx;
+
+    // Populate modal
+    $('#modalAvatar').text(expert.avatar).css('background', expert.color);
+    $('#modalName').text(expert.name);
+    $('#modalSpec').text(expert.spec + ' · ' + expert.exp);
+    $('#modalScore').text(expert.score + '%');
+
+    // Portfolio
+    var portfolioHtml = '';
+    expertPortfolios[idx].forEach(function(p) {
+      portfolioHtml += '<div class="modal-portfolio-item"><span class="project-name">' + p.name + '</span><span class="project-date">' + p.date + '</span></div>';
+    });
+    $('#modalPortfolio').html(portfolioHtml);
+
+    // Reviews
+    var reviewsHtml = '';
+    expertReviews[idx].forEach(function(r) {
+      var starsHtml = '';
+      for (var s = 0; s < 5; s++) {
+        starsHtml += '<i class="bi ' + (s < r.stars ? 'bi-star-fill' : 'bi-star') + '"></i>';
+      }
+      reviewsHtml += '<div class="modal-review-item">' +
+        '<div class="modal-review-stars">' + starsHtml + '</div>' +
+        '<div class="modal-review-text">' + r.text + '</div>' +
+        '<div class="modal-review-author">- ' + r.author + '</div>' +
+        '</div>';
+    });
+    $('#modalReviews').html(reviewsHtml);
+
+    $('#expertModalOverlay').fadeIn(200);
+  });
+
+  // Close modal
+  function closeExpertModal() {
+    $('#expertModalOverlay').fadeOut(200);
+  }
+  $('#expertModalClose, #btnModalClose').on('click', closeExpertModal);
+  $('#expertModalOverlay').on('click', function(e) {
+    if (e.target === this) closeExpertModal();
+  });
+
+  // Select expert from modal → go to section 4
+  $('#btnModalSelect').on('click', function() {
+    selectedExpert = experts[selectedExpertIndex];
+    closeExpertModal();
+    setTimeout(function() {
+      goToSection(4);
+    }, 250);
   });
 
   // ===========================
@@ -362,6 +468,111 @@ $(function() {
   $(document).on('click', '[data-goto-section]', function() {
     goToSection(parseInt($(this).data('goto-section')));
   });
+
+  // ===========================
+  // Feature 5: Live Cost Estimate
+  // ===========================
+  var fieldPrices = { '법률': 150, '의학': 180, '기술/IT': 120, '금융': 160, '마케팅': 100, '학술': 110, '일반': 80 };
+  var langMultipliers = {
+    'English (영어)': 1.0, '한국어': 1.0, '日本語 (일본어)': 1.1,
+    '中文 (중국어)': 1.05, 'Deutsch (독일어)': 1.3, 'Français (프랑스어)': 1.25
+  };
+
+  function updateCostEstimate() {
+    var field = $('.form-group select').filter(function() {
+      return $(this).closest('.form-group').find('label').text().indexOf('전문 분야') >= 0;
+    }).val() || '법률';
+
+    var tgtLang = $('#tgtLang').val() || '한국어';
+    var deadline = $('input[type="date"]').val() || '';
+
+    var base = fieldPrices[field] || 100;
+    var langMult = langMultipliers[tgtLang] || 1.0;
+
+    // Urgency multiplier based on deadline
+    var urgencyMult = 1.0;
+    var detail = field + ' 기본 ' + base + '만원';
+    if (deadline) {
+      var daysLeft = Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24));
+      if (daysLeft <= 3) {
+        urgencyMult = 1.5;
+        detail += ' × 긴급(1.5x)';
+      } else if (daysLeft <= 7) {
+        urgencyMult = 1.2;
+        detail += ' × 급행(1.2x)';
+      }
+    }
+    if (langMult !== 1.0) {
+      detail += ' × 언어(' + langMult.toFixed(1) + 'x)';
+    }
+
+    var total = Math.round(base * langMult * urgencyMult);
+    $('#costEstimateValue').text(total + '만원');
+    $('#costEstimateDetail').html('<span>' + detail + '</span>');
+  }
+
+  // Listen to all form changes
+  $(document).on('change', '#matchSection1 select, #matchSection1 input[type="date"]', function() {
+    updateCostEstimate();
+  });
+
+  // Initial calculation
+  updateCostEstimate();
+
+  // ===========================
+  // Feature 6: Matching Progress Visualization
+  // ===========================
+  function showMatchingProgress(callback) {
+    var steps = [
+      { text: '요구사항 분석 중...', delay: 800 },
+      { text: '전문가 DB 검색 중...', delay: 800 },
+      { text: '적합도 점수 산출 중...', delay: 800 },
+      { text: '최적 매칭 완료!', delay: 600 }
+    ];
+
+    var stepsHtml = '';
+    steps.forEach(function(s, i) {
+      stepsHtml += '<div class="matching-step-item" data-step="' + i + '">' +
+        '<div class="matching-step-icon"><span class="step-num-inner">' + (i + 1) + '</span></div>' +
+        '<span>' + s.text + '</span></div>';
+    });
+
+    var $overlay = $('<div class="matching-progress-overlay">' +
+      '<div class="matching-progress-content">' +
+      '<div class="loading-spinner"></div>' +
+      '<p class="loading-text">AI 전문가 매칭</p>' +
+      '<div class="matching-progress-steps">' + stepsHtml + '</div>' +
+      '</div></div>');
+
+    $('body').append($overlay);
+
+    var currentIdx = 0;
+    function advanceStep() {
+      if (currentIdx >= steps.length) {
+        // Done - remove overlay
+        setTimeout(function() {
+          $overlay.fadeOut(300, function() {
+            $overlay.remove();
+            if (callback) callback();
+          });
+        }, 400);
+        return;
+      }
+
+      var $step = $overlay.find('[data-step="' + currentIdx + '"]');
+      $step.addClass('active');
+      $step.find('.matching-step-icon').html('<div class="matching-step-spinner"></div>');
+
+      setTimeout(function() {
+        $step.removeClass('active').addClass('done');
+        $step.find('.matching-step-icon').html('<i class="bi bi-check-lg"></i>');
+        currentIdx++;
+        advanceStep();
+      }, steps[currentIdx].delay);
+    }
+
+    setTimeout(advanceStep, 200);
+  }
 
   // ===========================
   // Sidebar & Navigation

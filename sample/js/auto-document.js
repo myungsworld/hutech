@@ -686,4 +686,105 @@ $(function() {
     $(this).addClass('active');
   });
 
+  // ===========================
+  // Feature 1: AI Chat Assistant
+  // ===========================
+  var aiChatResponses = {
+    '이 문단을 더 공식적으로 바꿔줘': '수정 제안: "피고소인의 상기 범죄행위에 대하여 형사고소를 제기하오니, 관계 법령에 따라 엄정히 수사하여 처벌하여 주시기 바랍니다."',
+    '문장을 더 간결하게 줄여줘': '수정 제안: "피고소인은 2024년 3~8월간 고소인의 번역 원고 15건을 무단 복제·판매하여 약 5,000만원의 손해를 입혔습니다."',
+    '법률 용어를 더 정확하게 수정해줘': '수정 제안: "저작권법 제136조 제1항 제1호에 의거한 저작재산권(복제권 및 배포권) 침해 행위에 해당합니다."'
+  };
+  var defaultAiResponse = '수정 제안: 해당 문단의 표현을 보다 명확하고 전문적인 어조로 수정하였습니다. 법률 문서에 적합한 형식을 반영했습니다.';
+
+  // Toggle chat panel
+  $('#aiChatToggle').on('click', function() {
+    var $assist = $('#aiChatAssist');
+    var $body = $('#aiChatBody');
+    $assist.toggleClass('open');
+    if ($assist.hasClass('open')) {
+      $body.slideDown(200);
+    } else {
+      $body.slideUp(200);
+    }
+  });
+
+  // Send AI chat message
+  function sendAiChat(message) {
+    if (!message.trim()) return;
+    var response = aiChatResponses[message] || defaultAiResponse;
+    var $suggestion = $('#aiChatSuggestion');
+    var $text = $('#aiSuggestionText');
+
+    $suggestion.show();
+    $text.html('').addClass('ai-suggestion-typing');
+
+    // Typing animation for suggestion
+    var i = 0;
+    var typingInterval = setInterval(function() {
+      if (i < response.length) {
+        $text.append(document.createTextNode(response.charAt(i)));
+        i++;
+      } else {
+        clearInterval(typingInterval);
+        $text.removeClass('ai-suggestion-typing');
+      }
+    }, 15);
+
+    $('#aiChatInput').val('');
+  }
+
+  $('#btnAiChatSend').on('click', function() {
+    sendAiChat($('#aiChatInput').val());
+  });
+  $('#aiChatInput').on('keydown', function(e) {
+    if (e.which === 13) {
+      e.preventDefault();
+      sendAiChat($(this).val());
+    }
+  });
+
+  // Preset buttons
+  $(document).on('click', '.ai-preset-btn', function() {
+    var preset = $(this).data('preset');
+    $('#aiChatInput').val(preset);
+    sendAiChat(preset);
+  });
+
+  // Apply suggestion
+  $('#btnApplySuggestion').on('click', function() {
+    $('#aiChatSuggestion').fadeOut(200);
+    HuAnim.toast('수정사항이 적용되었습니다', 'success');
+  });
+
+  // ===========================
+  // Feature 2: Version History
+  // ===========================
+  $(document).on('click', '.version-pill', function() {
+    var ver = $(this).data('version');
+    $('.version-pill').removeClass('active');
+    $(this).addClass('active');
+    HuAnim.toast('버전 v' + ver + '으로 되돌렸습니다', 'info');
+  });
+
+  // ===========================
+  // Feature 3: Score Comparison
+  // ===========================
+  $('#toggleVersionCompare').on('click', function() {
+    var $card = $('#versionCompareCard');
+    if ($card.is(':visible')) {
+      $card.slideUp(200);
+      $(this).html('<i class="bi bi-arrow-left-right"></i> 이전 버전 비교');
+    } else {
+      $card.slideDown(200, function() {
+        // Animate bars
+        setTimeout(function() {
+          $('#prevVersionBar').css('width', '78.5%');
+          $('#curVersionBar').css('width', '91.3%');
+          $('#compareDiffBadge').addClass('show');
+        }, 100);
+      });
+      $(this).html('<i class="bi bi-arrow-left-right"></i> 비교 닫기');
+    }
+  });
+
 });
