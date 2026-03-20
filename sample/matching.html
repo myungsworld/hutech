@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>매칭 시스템 - HuTech</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/matching.css" rel="stylesheet">
+  <link href="css/auto-document.css" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ===== GNB ===== -->
+  <nav class="gnb">
+    <div class="gnb-left">
+      <div class="gnb-logo">
+        <span class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></span>
+        HuTech
+      </div>
+    </div>
+    <ul class="gnb-menu">
+      <li><a href="auto-document.html">창작작업실</a></li>
+      <li><a href="matching.html" class="active">매칭</a></li>
+    </ul>
+    <div class="gnb-actions">
+      <button class="btn-icon" title="알림"><i class="bi bi-bell"></i></button>
+      <div class="gnb-avatar">M</div>
+    </div>
+  </nav>
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <button class="sidebar-item" title="창작작업실" data-tooltip="창작작업실" onclick="location.href='auto-document.html'"><i class="bi bi-pencil-square"></i></button>
+      <button class="sidebar-item active" title="매칭" data-tooltip="매칭" onclick="location.href='matching.html'"><i class="bi bi-people"></i></button>
+      <button class="sidebar-item" title="내 문서" data-tooltip="내 문서"><i class="bi bi-file-earmark-text"></i></button>
+    </div>
+  </aside>
+
+  <!-- ===== Main Content ===== -->
+  <main class="main-content">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-nav">
+      <a href="auto-document.html"><i class="bi bi-house-door"></i></a>
+      <i class="bi bi-chevron-right"></i>
+      <span>매칭 시스템</span>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1 class="page-title">AI 전문가 매칭</h1>
+        <span class="page-badge">AI</span>
+      </div>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="workflow-stepper" style="margin-bottom:24px;">
+      <button class="step-item match-progress-step active current">
+        <span class="step-num">1</span>
+        <span class="step-label">의뢰 등록</span>
+      </button>
+      <div class="step-connector"></div>
+      <button class="step-item match-progress-step">
+        <span class="step-num">2</span>
+        <span class="step-label">AI 분석</span>
+      </button>
+      <div class="step-connector"></div>
+      <button class="step-item match-progress-step">
+        <span class="step-num">3</span>
+        <span class="step-label">전문가 매칭</span>
+      </button>
+      <div class="step-connector"></div>
+      <button class="step-item match-progress-step">
+        <span class="step-num">4</span>
+        <span class="step-label">매칭 확정</span>
+      </button>
+    </div>
+
+    <!-- ============================== -->
+    <!-- SECTION 1: Request Form         -->
+    <!-- ============================== -->
+    <section id="matchSection1" class="match-section active">
+      <div class="request-form-card">
+        <h2><i class="bi bi-pencil-square" style="color:var(--primary);"></i> 번역 의뢰 등록</h2>
+        <p class="form-desc">의뢰 내용을 입력하시면 AI가 분석하여 최적의 전문가를 매칭해드립니다.</p>
+
+        <div class="form-grid">
+          <!-- Language Pair -->
+          <div class="form-group full-width">
+            <label>번역 언어 <span class="required">*</span></label>
+            <div class="lang-pair">
+              <select>
+                <option>English (영어)</option>
+                <option>日本語 (일본어)</option>
+                <option>中文 (중국어)</option>
+                <option>Deutsch (독일어)</option>
+                <option>Français (프랑스어)</option>
+              </select>
+              <span class="lang-arrow"><i class="bi bi-arrow-left-right"></i></span>
+              <select>
+                <option>한국어</option>
+                <option>English (영어)</option>
+                <option>日本語 (일본어)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Category -->
+          <div class="form-group">
+            <label>전문 분야 <span class="required">*</span></label>
+            <select>
+              <option>법률</option>
+              <option>의학</option>
+              <option>기술/IT</option>
+              <option>금융</option>
+              <option>마케팅</option>
+              <option>학술</option>
+              <option>일반</option>
+            </select>
+          </div>
+
+          <!-- Sub Category -->
+          <div class="form-group">
+            <label>세부 분야</label>
+            <select>
+              <option>저작권법</option>
+              <option>계약서</option>
+              <option>특허</option>
+              <option>형사/민사</option>
+              <option>국제법</option>
+            </select>
+          </div>
+
+          <!-- Document Type -->
+          <div class="form-group">
+            <label>문서 유형</label>
+            <select>
+              <option>고소장/소장</option>
+              <option>계약서</option>
+              <option>논문/학술</option>
+              <option>매뉴얼</option>
+              <option>마케팅 자료</option>
+              <option>기타</option>
+            </select>
+          </div>
+
+          <!-- Deadline -->
+          <div class="form-group">
+            <label>희망 납기일 <span class="required">*</span></label>
+            <input type="date" value="2024-10-01">
+          </div>
+
+          <!-- Budget -->
+          <div class="form-group full-width">
+            <label>예산 범위</label>
+            <div class="budget-range">
+              <input type="range" id="budgetRange" min="50" max="500" value="200" step="10">
+              <span class="budget-value" id="budgetValue">200만원</span>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group full-width">
+            <label>상세 설명</label>
+            <textarea placeholder="번역이 필요한 문서의 내용, 특이사항, 요구사항 등을 자세히 적어주세요...">저작권 침해 관련 고소장 번역이 필요합니다. 원문은 한국어로 작성된 법률 문서이며, 영문 번역본이 필요합니다. 법률 용어의 정확한 번역과 법적 효력을 갖춘 문서 형식이 중요합니다. 총 23건의 문서이며, 긴급한 건 5건을 우선 처리해주셔야 합니다.</textarea>
+          </div>
+
+          <!-- Required Skills -->
+          <div class="form-group full-width">
+            <label>필요 역량 (태그)</label>
+            <div class="tag-input-wrap">
+              <span class="skill-tag">법률 번역 <button class="remove-tag">&times;</button></span>
+              <span class="skill-tag">저작권 <button class="remove-tag">&times;</button></span>
+              <span class="skill-tag">영한 번역 <button class="remove-tag">&times;</button></span>
+              <span class="skill-tag">고소장 <button class="remove-tag">&times;</button></span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
+          <button class="btn-ghost"><i class="bi bi-floppy"></i> 임시저장</button>
+          <button class="btn-primary" id="btnSubmitRequest"><i class="bi bi-stars"></i> AI 분석 요청</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- SECTION 2: AI Analysis          -->
+    <!-- ============================== -->
+    <section id="matchSection2" class="match-section">
+      <div class="analysis-card">
+        <div class="analysis-header">
+          <h2><i class="bi bi-cpu" style="color:var(--primary);"></i> AI 분석 결과</h2>
+          <p>의뢰 내용을 분석하여 최적의 매칭 조건을 도출했습니다</p>
+        </div>
+
+        <div class="analysis-results">
+          <div class="analysis-item">
+            <div class="analysis-icon blue"><i class="bi bi-translate"></i></div>
+            <div class="analysis-info">
+              <div class="analysis-label">번역 언어</div>
+              <div class="analysis-value">영어 → 한국어</div>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-icon green"><i class="bi bi-bookmark-star"></i></div>
+            <div class="analysis-info">
+              <div class="analysis-label">전문 분야</div>
+              <div class="analysis-value">법률 (저작권)</div>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-icon orange"><i class="bi bi-speedometer2"></i></div>
+            <div class="analysis-info">
+              <div class="analysis-label">문서 난이도</div>
+              <div class="analysis-value">상급 <span style="font-size:10px;background:#fff3e0;padding:2px 6px;border-radius:var(--radius-full);color:#f5a623;">HIGH</span></div>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-icon purple"><i class="bi bi-clock"></i></div>
+            <div class="analysis-info">
+              <div class="analysis-label">예상 소요시간</div>
+              <div class="analysis-value">3~5일</div>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-icon green"><i class="bi bi-person-badge"></i></div>
+            <div class="analysis-info">
+              <div class="analysis-label">권장 전문가 등급</div>
+              <div class="analysis-value">S급 이상 <span style="font-size:10px;background:#e6f7f0;padding:2px 6px;border-radius:var(--radius-full);color:#10a37f;">추천</span></div>
+            </div>
+          </div>
+          <div class="analysis-item">
+            <div class="analysis-icon orange"><i class="bi bi-cash-stack"></i></div>
+            <div class="analysis-info">
+              <div class="analysis-label">예상 비용</div>
+              <div class="analysis-value">150~200만원</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Radar Chart -->
+        <div class="radar-chart-wrap">
+          <p style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text-mid);">매칭 요구사항 분포</p>
+          <svg viewBox="0 0 280 280" width="280" height="280">
+            <!-- Grid -->
+            <polygon class="radar-grid" points="140,40 233,103 197,213 83,213 47,103" />
+            <polygon class="radar-grid" points="140,65 210,115 185,195 95,195 70,115" />
+            <polygon class="radar-grid" points="140,90 188,127 172,178 108,178 92,127" />
+            <!-- Axes -->
+            <line class="radar-axis" x1="140" y1="140" x2="140" y2="40" />
+            <line class="radar-axis" x1="140" y1="140" x2="233" y2="103" />
+            <line class="radar-axis" x1="140" y1="140" x2="197" y2="213" />
+            <line class="radar-axis" x1="140" y1="140" x2="83" y2="213" />
+            <line class="radar-axis" x1="140" y1="140" x2="47" y2="103" />
+            <!-- Data polygon -->
+            <polygon id="radarPolygon" class="radar-polygon" points="140,140 140,140 140,140 140,140 140,140" />
+            <!-- Dots -->
+            <circle class="radar-dot" cx="140" cy="140" r="4" />
+            <circle class="radar-dot" cx="140" cy="140" r="4" />
+            <circle class="radar-dot" cx="140" cy="140" r="4" />
+            <circle class="radar-dot" cx="140" cy="140" r="4" />
+            <circle class="radar-dot" cx="140" cy="140" r="4" />
+            <!-- Labels -->
+            <text class="radar-label" x="140" y="28" text-anchor="middle">정확성</text>
+            <text class="radar-label" x="245" y="103" text-anchor="start">전문성</text>
+            <text class="radar-label" x="203" y="228" text-anchor="middle">속도</text>
+            <text class="radar-label" x="77" y="228" text-anchor="middle">비용</text>
+            <text class="radar-label" x="35" y="103" text-anchor="end">감수</text>
+          </svg>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:8px;">
+          <button class="btn-ghost" data-goto-section="1"><i class="bi bi-chevron-left"></i> 이전</button>
+          <button class="btn-primary" id="btnStartMatching"><i class="bi bi-people"></i> 전문가 매칭 시작 <i class="bi bi-chevron-right"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- SECTION 3: Expert Matching      -->
+    <!-- ============================== -->
+    <section id="matchSection3" class="match-section">
+      <div class="matching-header">
+        <h2><i class="bi bi-people-fill" style="color:var(--primary);"></i> AI 추천 전문가</h2>
+        <span class="matching-count">총 5명의 전문가가 매칭되었습니다</span>
+      </div>
+
+      <div class="expert-list" id="expertList">
+        <!-- Populated by JS -->
+      </div>
+
+      <div style="display:flex;justify-content:space-between;">
+        <button class="btn-ghost" data-goto-section="2"><i class="bi bi-chevron-left"></i> 분석 결과 보기</button>
+        <button class="btn-ghost"><i class="bi bi-arrow-clockwise"></i> 재매칭</button>
+      </div>
+    </section>
+
+    <!-- ============================== -->
+    <!-- SECTION 4: Match Confirmation   -->
+    <!-- ============================== -->
+    <section id="matchSection4" class="match-section">
+      <div class="confirm-card">
+        <div class="confirm-icon" id="confirmIcon">
+          <i class="bi bi-person-check" style="font-size:28px;"></i>
+        </div>
+        <h2 id="confirmTitle">매칭 확정</h2>
+        <p class="confirm-desc" id="confirmDesc">선택하신 전문가와의 매칭을 확정하시겠습니까?</p>
+
+        <div class="confirm-detail">
+          <div class="confirm-detail-left">
+            <h4>의뢰 정보</h4>
+            <div class="confirm-detail-row"><span class="detail-label">번역 언어</span><span class="detail-value">영어 → 한국어</span></div>
+            <div class="confirm-detail-row"><span class="detail-label">전문 분야</span><span class="detail-value">법률 (저작권)</span></div>
+            <div class="confirm-detail-row"><span class="detail-label">문서 유형</span><span class="detail-value">고소장</span></div>
+            <div class="confirm-detail-row"><span class="detail-label">희망 납기일</span><span class="detail-value">2024-10-01</span></div>
+            <div class="confirm-detail-row"><span class="detail-label">예산</span><span class="detail-value">200만원</span></div>
+          </div>
+          <div class="confirm-detail-right">
+            <h4>선택된 전문가</h4>
+            <div class="confirm-detail-row"><span class="detail-label">이름</span><span class="detail-value" id="confirmExpertName">김서연</span></div>
+            <div class="confirm-detail-row"><span class="detail-label">전문 분야</span><span class="detail-value" id="confirmExpertSpec">법률 번역 전문가</span></div>
+            <div class="confirm-detail-row"><span class="detail-label">적합도</span><span class="detail-value" style="color:var(--primary);" id="confirmExpertScore">97.2%</span></div>
+            <div class="confirm-detail-row"><span class="detail-label">추천 이유</span><span class="detail-value" id="confirmExpertReason" style="font-size:11px;">-</span></div>
+          </div>
+        </div>
+
+        <div class="confirm-actions">
+          <button class="btn-ghost" data-goto-section="3"><i class="bi bi-chevron-left"></i> 다른 전문가 선택</button>
+          <button class="btn-primary" id="btnConfirmMatch" style="padding:10px 24px;"><i class="bi bi-check-lg"></i> 매칭 확정</button>
+          <button class="btn-primary" id="btnNewRequest" style="padding:10px 24px;display:none;"><i class="bi bi-plus-lg"></i> 새 의뢰 등록</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/matching.js"></script>
+</body>
+</html>

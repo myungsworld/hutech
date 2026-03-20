@@ -140,8 +140,8 @@ $(function() {
   function sendMessage() {
     var text = $textarea.val().trim();
     if (text) {
-      // 에디터 페이지로 이동
-      window.location.href = 'editor.html';
+      // 자동문서 프로세스 페이지로 이동
+      window.location.href = 'auto-document.html';
     }
   }
 
@@ -151,7 +151,7 @@ $(function() {
   $('.step-item').on('click', function() {
     var label = $(this).find('.step-label').text();
     if (label === '양식 만들기' || label === '내용 작성') {
-      window.location.href = 'editor.html';
+      window.location.href = 'auto-document.html';
     }
   });
 
@@ -159,6 +159,6 @@ $(function() {
   // Suggest card click
   // ===========================
   $('.suggest-card').on('click', function() {
-    window.location.href = 'editor.html';
+    window.location.href = 'auto-document.html';
   });
 });

@@ -1,0 +1,488 @@
+/**
+ * HuTech - Auto Document Demo (자동문서 프로세스)
+ * Step 1: Upload/Input → Step 2: AI Generation → Step 3: Editing → Step 4: AI Evaluation → Step 5: Output
+ */
+$(function() {
+  'use strict';
+
+  var currentStep = 1;
+
+  // ===========================
+  // Pre-written AI Responses (simulated)
+  // ===========================
+  var aiResponses = {
+    chatgpt: {
+      title: '고소장',
+      content: '피고소인의 아래 범죄사실에 대하여 고소하오니 수사하여 엄벌에 처하여 주시기 바랍니다.\n\n' +
+        '피고소인은 2024년 3월경부터 2024년 8월경까지 서울특별시 강남구 소재 ○○오피스텔에서, ' +
+        '고소인의 저작물인 번역 원고를 무단으로 복제하여 제3자에게 판매하였습니다.\n\n' +
+        '이는 저작권법 제136조 제1항 제1호에 해당하는 저작재산권 침해 행위로서, ' +
+        '피고소인의 행위로 인해 고소인은 약 5,000만 원 상당의 재산적 손해를 입었습니다.\n\n' +
+        '이에 피고소인을 저작권법 위반으로 고소하오니, 철저히 수사하여 주시기 바랍니다.',
+      time: '3.2초',
+      tokens: '287'
+    },
+    gemini: {
+      title: '고소장',
+      content: '아래와 같이 피고소인의 범죄사실을 고소하오니, 수사 후 엄중 처벌하여 주시기 바랍니다.\n\n' +
+        '【범죄사실 요약】\n' +
+        '피고소인은 2024년 3월부터 동년 8월까지 약 6개월간에 걸쳐, 고소인이 창작한 전문 번역 원고(총 15건)를 ' +
+        '고소인의 동의 없이 복제·배포하여 부당이익을 취하였습니다.\n\n' +
+        '【적용 법조】\n' +
+        '저작권법 제136조(벌칙) 제1항: 저작재산권을 복제·배포 등의 방법으로 침해한 자는 ' +
+        '5년 이하의 징역 또는 5천만원 이하의 벌금에 처합니다.\n\n' +
+        '【피해 규모】\n' +
+        '- 직접 손해: 원고 판매 대금 약 3,500만원\n' +
+        '- 간접 손해: 신뢰도 하락으로 인한 거래처 이탈 약 1,500만원',
+      time: '2.8초',
+      tokens: '312'
+    },
+    wrtn: {
+      title: '고소장',
+      content: '존경하는 수사기관 귀중\n\n' +
+        '고소인은 아래 범죄사실에 관하여 피고소인을 저작권법 위반으로 고소합니다.\n\n' +
+        '1. 사건 개요\n' +
+        '고소인은 전문 번역 서비스를 제공하는 번역사로서, 피고소인과 2024년 1월 번역 용역 계약을 체결한 바 있습니다. ' +
+        '그러나 피고소인은 계약 범위를 벗어나 고소인의 번역 원고를 무단 복제하여 자신의 명의로 판매하였습니다.\n\n' +
+        '2. 구체적 범죄사실\n' +
+        '가. 피고소인은 2024년 3월경 고소인의 영한 번역 원고 10건을 무단 복제\n' +
+        '나. 동년 5월경 상기 원고를 자신의 번역물로 위장하여 온라인 플랫폼에 게시\n' +
+        '다. 동년 8월까지 약 5,000만원 상당의 부당이익 취득',
+      time: '4.1초',
+      tokens: '298'
+    },
+    claude: {
+      title: '고소장',
+      content: '본 고소장은 피고소인의 저작권법 위반 행위에 대하여 엄정한 수사와 처벌을 구하기 위해 제출합니다.\n\n' +
+        '■ 고소 취지\n' +
+        '피고소인을 저작권법 제136조 제1항 위반으로 고소하오니, 수사하여 처벌하여 주시기 바랍니다.\n\n' +
+        '■ 범죄사실\n' +
+        '피고소인은 고소인이 2023년 12월부터 2024년 2월까지 작성한 전문 번역 원고(법률 문서 번역 15건, ' +
+        '기술 문서 번역 8건, 총 23건)를 2024년 3월부터 8월까지 무단으로 복제하여 ' +
+        '온라인 번역 플랫폼 3곳에서 자신의 결과물로 판매하였습니다.\n\n' +
+        '■ 증거 자료\n' +
+        '1. 원본 번역 원고 및 작업 일지 (증거 1호)\n' +
+        '2. 피고소인의 판매 게시물 스크린샷 (증거 2호)\n' +
+        '3. 결제 내역 확인서 (증거 3호)\n' +
+        '4. 고소인-피고소인 간 계약서 사본 (증거 4호)',
+      time: '3.7초',
+      tokens: '341'
+    }
+  };
+
+  var evaluationData = {
+    overall: 91.3,
+    grade: 'A+',
+    scores: [
+      { label: '정확성', desc: '법률 용어 및 사실관계의 정확도', value: 94.2, color: '#10a37f' },
+      { label: '적합성', desc: '고소장 양식 및 법적 요건 충족도', value: 88.5, color: '#f5a623' },
+      { label: '표현성', desc: '문장 구성 및 논리적 전개의 완성도', value: 91.1, color: '#10a37f' }
+    ],
+    subScores: [
+      { name: '법률 용어 정확성', score: 95, color: '#10a37f' },
+      { name: '사실관계 명확성', score: 92, color: '#10a37f' },
+      { name: '양식 적합성', score: 88, color: '#f5a623' },
+      { name: '논리적 구조', score: 90, color: '#10a37f' },
+      { name: '문장 가독성', score: 93, color: '#10a37f' },
+      { name: '증거 인용 적절성', score: 86, color: '#f5a623' }
+    ],
+    feedback: [
+      { type: 'good', icon: 'bi-check-lg', text: '<strong>법률 용어 사용이 정확합니다.</strong> 저작권법 제136조 인용이 적절하며, 고소 요건을 충족합니다.' },
+      { type: 'good', icon: 'bi-check-lg', text: '<strong>범죄사실 기술이 구체적입니다.</strong> 시간, 장소, 행위가 명확하게 특정되어 있습니다.' },
+      { type: 'warn', icon: 'bi-exclamation-lg', text: '<strong>피해 금액 산정 근거 보완 필요.</strong> 5,000만원의 산출 근거를 구체적으로 명시하면 설득력이 높아집니다.' },
+      { type: 'improve', icon: 'bi-arrow-up', text: '<strong>증거 자료 목록 추가 권장.</strong> 증거 자료의 구체적 목록과 번호를 본문에 포함하면 좋겠습니다.' }
+    ]
+  };
+
+  // ===========================
+  // Step Navigation
+  // ===========================
+  function goToStep(step) {
+    if (step === currentStep) return;
+    var $current = $('#step' + currentStep);
+    var $next = $('#step' + step);
+
+    // Update stepper
+    var $items = $('.step-item');
+    var $connectors = $('.step-connector');
+    $items.removeClass('active completed');
+    $connectors.removeClass('active');
+    for (var i = 0; i < step; i++) {
+      $items.eq(i).addClass(i < step - 1 ? 'completed' : 'active');
+    }
+    for (var j = 0; j < step - 1; j++) {
+      $connectors.eq(j).addClass('active');
+    }
+
+    HuAnim.slideTransition($current, $next, function() {
+      currentStep = step;
+      onStepEnter(step);
+    });
+  }
+
+  function onStepEnter(step) {
+    if (step === 2) startAIGeneration();
+    if (step === 4) startEvaluation();
+    if (step === 5) showFinalOutput();
+  }
+
+  // Step click
+  $(document).on('click', '.step-item', function() {
+    var idx = $('.step-item').index(this) + 1;
+    if (idx <= currentStep + 1) {
+      goToStep(idx);
+    }
+  });
+
+  // Next/Prev buttons
+  $(document).on('click', '[data-next-step]', function() {
+    var nextStep = parseInt($(this).attr('data-next-step'));
+    if (nextStep === 2) {
+      // Step 1 → 2: Show loading first
+      HuAnim.showLoading('AI가 문서를 분석하고 생성 중입니다', 2500, function() {
+        goToStep(2);
+      });
+    } else {
+      goToStep(nextStep);
+    }
+  });
+
+  $(document).on('click', '[data-prev-step]', function() {
+    goToStep(parseInt($(this).attr('data-prev-step')));
+  });
+
+  // ===========================
+  // Step 1: Upload & Input
+  // ===========================
+  var $dropZone = $('#dropZone');
+
+  $dropZone.on('dragover', function(e) {
+    e.preventDefault();
+    $(this).addClass('dragover');
+  });
+  $dropZone.on('dragleave drop', function(e) {
+    e.preventDefault();
+    $(this).removeClass('dragover');
+    if (e.type === 'drop') {
+      var files = e.originalEvent.dataTransfer.files;
+      if (files.length > 0) handleUpload(files);
+    }
+  });
+  $dropZone.on('click', function() {
+    var $input = $('<input type="file" multiple accept=".pdf,.docx,.txt,.png,.jpg">');
+    $input.on('change', function() { handleUpload(this.files); });
+    $input.trigger('click');
+  });
+
+  function handleUpload(files) {
+    var $tags = $('#fileTags');
+    for (var i = 0; i < files.length; i++) {
+      var ext = files[i].name.split('.').pop().toLowerCase();
+      var icon = ext === 'pdf' ? 'bi-file-pdf' : 'bi-file-earmark';
+      $tags.append('<span class="file-tag"><i class="bi ' + icon + '"></i> ' +
+        files[i].name + ' <button class="tag-remove">&times;</button></span>');
+    }
+    HuAnim.toast('파일이 업로드되었습니다', 'success');
+  }
+
+  $(document).on('click', '.tag-remove', function(e) {
+    e.stopPropagation();
+    $(this).parent().fadeOut(150, function() { $(this).remove(); });
+  });
+
+  // Chat input
+  var $textarea = $('#chatInput');
+  $textarea.on('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+  });
+  $textarea.on('keydown', function(e) {
+    if (e.which === 13 && !e.shiftKey) {
+      e.preventDefault();
+      submitStep1();
+    }
+  });
+  $('.btn-send').on('click', submitStep1);
+
+  function submitStep1() {
+    HuAnim.showLoading('AI가 문서를 분석하고 생성 중입니다', 2500, function() {
+      goToStep(2);
+    });
+  }
+
+  // Settings toggle
+  $('#toggleSettings').on('click', function() {
+    var $body = $('#settingsBody');
+    var $icon = $(this).find('i');
+    $body.toggleClass('collapsed');
+    $icon.toggleClass('bi-chevron-up bi-chevron-down');
+  });
+
+  // AI chip toggle
+  $('.ai-chip').on('click', function() {
+    $(this).toggleClass('selected');
+  });
+
+  // Toggle buttons
+  $('.toggle-btn').on('click', function() {
+    $(this).siblings().removeClass('active');
+    $(this).addClass('active');
+  });
+
+  // ===========================
+  // Step 2: AI Generation
+  // ===========================
+  var typingIntervals = {};
+  var generatedResponses = {};
+
+  function startAIGeneration() {
+    // Start typing for the active tab
+    var firstAI = 'chatgpt';
+    generateForAI(firstAI);
+
+    // Generate for other AIs in background (with delays)
+    setTimeout(function() { generateForAI('gemini'); }, 1000);
+    setTimeout(function() { generateForAI('wrtn'); }, 2000);
+    setTimeout(function() { generateForAI('claude'); }, 1500);
+  }
+
+  function generateForAI(aiName) {
+    var data = aiResponses[aiName];
+    var $tab = $('.ai-tab[data-ai="' + aiName + '"]');
+    var $status = $tab.find('.tab-status');
+
+    $status.text('생성 중...').removeClass('done');
+
+    // If this is the active tab, show typing
+    if ($tab.hasClass('active')) {
+      var $panel = $('#aiResponseContent');
+      typingIntervals[aiName] = HuAnim.typeText($panel, data.content, 20, function() {
+        $status.text('완료').addClass('done');
+        generatedResponses[aiName] = data.content;
+        updateResponseMeta(aiName);
+      });
+    } else {
+      // Simulate background generation
+      var genTime = parseInt(parseFloat(data.time) * 1000);
+      setTimeout(function() {
+        $status.text('완료').addClass('done');
+        generatedResponses[aiName] = data.content;
+      }, genTime);
+    }
+  }
+
+  function updateResponseMeta(aiName) {
+    var data = aiResponses[aiName];
+    $('#responseMeta').html(
+      '<span><i class="bi bi-clock"></i> ' + data.time + '</span>' +
+      '<span><i class="bi bi-chat-dots"></i> ' + data.tokens + ' tokens</span>'
+    );
+  }
+
+  // AI Tab switching
+  $(document).on('click', '.ai-tab', function() {
+    var aiName = $(this).data('ai');
+    $('.ai-tab').removeClass('active');
+    $(this).addClass('active');
+
+    var $panel = $('#aiResponseContent');
+
+    if (generatedResponses[aiName]) {
+      $panel.html(generatedResponses[aiName].replace(/\n/g, '<br>'));
+      updateResponseMeta(aiName);
+    } else {
+      var data = aiResponses[aiName];
+      if (typingIntervals[aiName]) clearInterval(typingIntervals[aiName]);
+      typingIntervals[aiName] = HuAnim.typeText($panel, data.content, 20, function() {
+        generatedResponses[aiName] = data.content;
+        updateResponseMeta(aiName);
+        $('.ai-tab[data-ai="' + aiName + '"] .tab-status').text('완료').addClass('done');
+      });
+    }
+  });
+
+  // Compare view toggle
+  var isCompareView = false;
+  $(document).on('click', '#toggleCompare', function() {
+    isCompareView = !isCompareView;
+    if (isCompareView) {
+      $(this).html('<i class="bi bi-layout-sidebar"></i> 단일 보기');
+      showCompareView();
+    } else {
+      $(this).html('<i class="bi bi-grid"></i> 비교 보기');
+      hideCompareView();
+    }
+  });
+
+  function showCompareView() {
+    $('#singleView').hide();
+    var html = '<div class="compare-grid">';
+    var ais = ['chatgpt', 'gemini', 'wrtn', 'claude'];
+    var colors = { chatgpt: '#10a37f', gemini: '#4285f4', wrtn: '#d33717', claude: '#7c3aed' };
+    var names = { chatgpt: 'ChatGPT', gemini: 'Gemini', wrtn: 'wrtn', claude: 'Claude' };
+
+    ais.forEach(function(ai) {
+      var content = generatedResponses[ai] || 'AI가 생성 중입니다...';
+      html += '<div class="compare-card">' +
+        '<button class="select-btn" data-select-ai="' + ai + '">선택</button>' +
+        '<div class="compare-card-header">' +
+        '<span class="tab-dot" style="background:' + colors[ai] + '"></span>' +
+        names[ai] +
+        '</div>' +
+        '<div class="compare-card-body">' + content.replace(/\n/g, '<br>') + '</div>' +
+        '</div>';
+    });
+    html += '</div>';
+    $('#compareView').html(html).show();
+  }
+
+  function hideCompareView() {
+    $('#compareView').hide();
+    $('#singleView').show();
+  }
+
+  // Select AI in compare view
+  $(document).on('click', '.select-btn', function() {
+    $('.select-btn').removeClass('selected');
+    $(this).addClass('selected');
+    var ai = $(this).data('select-ai');
+    selectedAI = ai;
+    HuAnim.toast(ai.charAt(0).toUpperCase() + ai.slice(1) + ' 결과가 선택되었습니다', 'info');
+  });
+
+  var selectedAI = 'chatgpt';
+
+  // ===========================
+  // Step 3: Editor
+  // ===========================
+  // Toolbar commands
+  $(document).on('click', '.toolbar-btn[data-cmd]', function() {
+    var cmd = $(this).data('cmd');
+    var val = $(this).data('val') || null;
+    document.execCommand(cmd, false, val);
+    $(this).toggleClass('active');
+  });
+
+  // Word count
+  $(document).on('input', '#editorContent', function() {
+    var text = $(this).text();
+    var chars = text.length;
+    var words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    $('#charCount').text(chars);
+    $('#wordCount').text(words);
+    // Sync preview
+    $('#previewContent').html($(this).html());
+  });
+
+  // Populate editor when entering step 3
+  $(document).on('click', '[data-next-step="3"]', function() {
+    setTimeout(function() {
+      var content = generatedResponses[selectedAI] || aiResponses.chatgpt.content;
+      $('#editorContent').html(content.replace(/\n/g, '<br>'));
+      $('#previewContent').html(content.replace(/\n/g, '<br>'));
+      var chars = content.length;
+      $('#charCount').text(chars);
+      $('#wordCount').text(content.trim().split(/\s+/).length);
+    }, 400);
+  });
+
+  // ===========================
+  // Step 4: AI Evaluation
+  // ===========================
+  function startEvaluation() {
+    // Animate overall score
+    HuAnim.countUp($('#overallValue'), evaluationData.overall, 2500, '%');
+
+    // Animate circular scores
+    evaluationData.scores.forEach(function(score, i) {
+      var $card = $('.score-card').eq(i);
+      var $circle = $card.find('.circle-progress');
+      var $value = $card.find('.score-value');
+      var scoreClass = score.value >= 90 ? 'score-high' : score.value >= 80 ? 'score-mid' : 'score-low';
+      $card.addClass(scoreClass);
+
+      setTimeout(function() {
+        HuAnim.fillCircle($circle, score.value, 2000);
+        HuAnim.countUp($value, score.value, 2000, '%');
+      }, i * 300);
+    });
+
+    // Animate sub scores
+    setTimeout(function() {
+      evaluationData.subScores.forEach(function(sub, i) {
+        setTimeout(function() {
+          var $row = $('.sub-eval-row').eq(i);
+          $row.find('.eval-bar-fill').css({
+            width: sub.score + '%',
+            background: sub.color
+          });
+          $row.find('.eval-bar-score').text(sub.score + '%');
+        }, i * 200);
+      });
+    }, 800);
+
+    // Stagger feedback items
+    setTimeout(function() {
+      HuAnim.staggerReveal($('.feedback-item'), 400);
+    }, 1500);
+  }
+
+  // ===========================
+  // Step 5: Final Output
+  // ===========================
+  function showFinalOutput() {
+    HuAnim.toast('문서가 성공적으로 생성되었습니다!', 'success', 4000);
+
+    // Animate summary values
+    setTimeout(function() {
+      HuAnim.countUp($('#summaryScore'), evaluationData.overall, 1500, '점');
+    }, 500);
+  }
+
+  // Output actions
+  $(document).on('click', '#btnDownloadPdf', function() {
+    HuAnim.toast('PDF 다운로드가 시작됩니다', 'info');
+  });
+  $(document).on('click', '#btnPrint', function() {
+    window.print();
+  });
+  $(document).on('click', '#btnPublish', function() {
+    HuAnim.showLoading('게시 중입니다', 1500, function() {
+      HuAnim.toast('문서가 게시되었습니다!', 'success');
+    });
+  });
+
+  // ===========================
+  // Suggest card click → step 2
+  // ===========================
+  $(document).on('click', '.suggest-card', function() {
+    submitStep1();
+  });
+
+  // ===========================
+  // My Documents Panel Toggle
+  // ===========================
+  $('#btnMyDocs').on('click', function() {
+    var $panel = $('#myDocsPanel');
+    if ($panel.is(':visible')) {
+      $panel.hide();
+    } else {
+      $panel.show();
+    }
+  });
+
+  // ===========================
+  // Category Tab Switching
+  // ===========================
+  $('.category-tabs .tab-pill').on('click', function() {
+    $('.category-tabs .tab-pill').removeClass('active');
+    $(this).addClass('active');
+  });
+
+  // Sidebar
+  $('.sidebar-item').on('click', function() {
+    $('.sidebar-item').removeClass('active');
+    $(this).addClass('active');
+  });
+
+});
