@@ -653,14 +653,23 @@ $(function() {
       s.color = s.score >= 90 ? '#10a37f' : '#f5a623';
     });
 
+    // Update grade
+    var grade = evaluationData.overall >= 95 ? 'S' : evaluationData.overall >= 90 ? 'A+' : evaluationData.overall >= 85 ? 'A' : 'B+';
+    evaluationData.grade = grade;
+    $('.overall-grade').text(grade);
+
     // Reset UI
     $('.score-card').removeClass('score-high score-mid score-low');
-    $('.circle-progress').css({ 'stroke-dashoffset': '', 'transition': 'none' });
+    $('.circle-progress').css({ 'stroke-dashoffset': '', 'stroke-dasharray': '', 'transition': 'none' });
     $('.score-value').text('0.0%');
     $('#overallValue').text('0.0%');
-    $('.eval-bar-fill').css({ width: 0 });
+    $('.eval-bar-fill').css({ width: 0, transition: 'none' });
     $('.eval-bar-score').text('-');
     $('.feedback-item').css({ opacity: 0 });
+    // Re-enable transitions after reset
+    setTimeout(function() {
+      $('.eval-bar-fill').css({ transition: 'width 1.5s ease-out' });
+    }, 50);
 
     HuAnim.showLoading('AI가 재평가 중입니다', 2000, function() {
       startEvaluation();

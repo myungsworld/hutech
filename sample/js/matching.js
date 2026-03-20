@@ -147,16 +147,19 @@ $(function() {
     updateCostEstimate();
   });
 
-  // Language swap button - swap by value, not index
-  $(document).on('click', '.lang-arrow', function() {
-    var $src = $('#srcLang');
-    var $tgt = $('#tgtLang');
-    var srcVal = $src.val();
-    var tgtVal = $tgt.val();
-    $src.val(tgtVal);
-    $tgt.val(srcVal);
+  // Language swap button
+  $('#btnLangSwap').on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var srcVal = document.getElementById('srcLang').value;
+    var tgtVal = document.getElementById('tgtLang').value;
+    document.getElementById('srcLang').value = tgtVal;
+    document.getElementById('tgtLang').value = srcVal;
     updateCostEstimate();
-    HuAnim.toast('언어 쌍이 변경되었습니다', 'info');
+    HuAnim.toast(
+      $('#srcLang option:selected').text() + ' → ' + $('#tgtLang option:selected').text(),
+      'info'
+    );
   });
 
   // Helper: get current form values for analysis
