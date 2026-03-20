@@ -579,11 +579,24 @@ $(function() {
   $(document).on('click', '[data-next-step="3"]', function() {
     setTimeout(function() {
       var content = generatedResponses[selectedAI] || aiResponses.chatgpt.content;
-      $('#editorContent').html(content.replace(/\n/g, '<br>'));
-      $('#previewContent').html(content.replace(/\n/g, '<br>'));
+      var htmlContent = content.replace(/\n/g, '<br>');
+      $('#editorContent').html(htmlContent);
+      $('#previewContent').html(htmlContent);
       var chars = content.length;
       $('#charCount').text(chars);
       $('#wordCount').text(content.trim().split(/\s+/).length);
+
+      // Save as v1 original
+      versionHistory = [htmlContent];
+      currentVersion = 0;
+      $('.version-pill').removeClass('active');
+      $('.version-pill').eq(0).addClass('active');
+
+      // Open AI assistant by default
+      var $assist = $('#aiChatAssist');
+      if (!$assist.hasClass('open')) {
+        $assist.addClass('open');
+      }
     }, 400);
   });
 
@@ -627,6 +640,33 @@ $(function() {
       HuAnim.staggerReveal($('.feedback-item'), 400);
     }, 1500);
   }
+
+  // Re-evaluate button
+  $(document).on('click', '#btnReEvaluate', function() {
+    // Randomize scores slightly for different result
+    evaluationData.overall = Math.round((89 + Math.random() * 8) * 10) / 10;
+    evaluationData.scores[0].value = Math.round((90 + Math.random() * 8) * 10) / 10;
+    evaluationData.scores[1].value = Math.round((85 + Math.random() * 10) * 10) / 10;
+    evaluationData.scores[2].value = Math.round((88 + Math.random() * 9) * 10) / 10;
+    evaluationData.subScores.forEach(function(s) {
+      s.score = Math.round(82 + Math.random() * 16);
+      s.color = s.score >= 90 ? '#10a37f' : '#f5a623';
+    });
+
+    // Reset UI
+    $('.score-card').removeClass('score-high score-mid score-low');
+    $('.circle-progress').css({ 'stroke-dashoffset': '', 'transition': 'none' });
+    $('.score-value').text('0.0%');
+    $('#overallValue').text('0.0%');
+    $('.eval-bar-fill').css({ width: 0 });
+    $('.eval-bar-score').text('-');
+    $('.feedback-item').css({ opacity: 0 });
+
+    HuAnim.showLoading('AI가 재평가 중입니다', 2000, function() {
+      startEvaluation();
+      HuAnim.toast('재평가가 완료되었습니다', 'success');
+    });
+  });
 
   // ===========================
   // Step 5: Final Output
@@ -690,11 +730,33 @@ $(function() {
   // Feature 1: AI Chat Assistant
   // ===========================
   var aiChatResponses = {
-    '이 문단을 더 공식적으로 바꿔줘': '수정 제안: "피고소인의 상기 범죄행위에 대하여 형사고소를 제기하오니, 관계 법령에 따라 엄정히 수사하여 처벌하여 주시기 바랍니다."',
-    '문장을 더 간결하게 줄여줘': '수정 제안: "피고소인은 2024년 3~8월간 고소인의 번역 원고 15건을 무단 복제·판매하여 약 5,000만원의 손해를 입혔습니다."',
-    '법률 용어를 더 정확하게 수정해줘': '수정 제안: "저작권법 제136조 제1항 제1호에 의거한 저작재산권(복제권 및 배포권) 침해 행위에 해당합니다."'
+    '이 문단을 더 공식적으로 바꿔줘': {
+      suggestion: '수정 제안: "피고소인의 상기 범죄행위에 대하여 형사고소를 제기하오니, 관계 법령에 따라 엄정히 수사하여 처벌하여 주시기 바랍니다."',
+      newContent: '피고소인의 상기 범죄행위에 대하여 형사고소를 제기하오니, 관계 법령에 따라 엄정히 수사하여 처벌하여 주시기 바랍니다.\n\n' +
+        '피고소인은 2024년 3월경부터 동년 8월경까지 서울특별시 강남구 소재 사무실에서, ' +
+        '고소인의 저작물인 전문 번역 원고(총 15건)를 권리자의 허락 없이 무단으로 복제하여 제3자에게 유상 배포하였습니다.\n\n' +
+        '상기 행위는 저작권법 제136조 제1항 제1호에 해당하는 저작재산권(복제권 및 배포권) 침해 행위에 해당하며, ' +
+        '이로 인하여 고소인은 약 5,000만 원 상당의 재산적 손해를 입었습니다.\n\n' +
+        '이에 피고소인을 저작권법 위반으로 형사고소하오니, 관계 법령에 의거하여 엄정히 수사하여 주시기 바랍니다.'
+    },
+    '문장을 더 간결하게 줄여줘': {
+      suggestion: '수정 제안: 불필요한 수식어를 제거하고 핵심 사실만 남겼습니다.',
+      newContent: '피고소인은 2024년 3~8월간 고소인의 번역 원고 15건을 무단 복제·판매하여 약 5,000만원의 손해를 입혔습니다.\n\n' +
+        '적용 법조: 저작권법 제136조 제1항 제1호\n\n' +
+        '이에 엄벌을 구합니다.'
+    },
+    '법률 용어를 더 정확하게 수정해줘': {
+      suggestion: '수정 제안: 법률 용어를 판례 기준에 맞게 수정했습니다. "무단 복제" → "저작재산권(복제권 및 배포권) 침해"',
+      newContent: '피고소인의 아래 저작재산권 침해 행위에 대하여 고소하오니 수사하여 엄벌에 처하여 주시기 바랍니다.\n\n' +
+        '피고소인은 2024년 3월경부터 2024년 8월경까지 서울특별시 강남구 소재 ○○오피스텔에서, ' +
+        '고소인의 저작물인 번역 원고에 대한 저작재산권(복제권 및 배포권)을 침해하여 제3자에게 유상 배포하였습니다.\n\n' +
+        '이는 저작권법 제136조 제1항 제1호에 의거한 저작재산권 침해 행위로서, ' +
+        '동법 제125조에 따른 손해배상액은 약 5,000만 원으로 산정됩니다.\n\n' +
+        '이에 피고소인을 저작권법 위반으로 고소하오니, 철저히 수사하여 주시기 바랍니다.'
+    }
   };
-  var defaultAiResponse = '수정 제안: 해당 문단의 표현을 보다 명확하고 전문적인 어조로 수정하였습니다. 법률 문서에 적합한 형식을 반영했습니다.';
+  var defaultAiResponse = { suggestion: '수정 제안: 해당 문단의 표현을 보다 명확하고 전문적인 어조로 수정하였습니다.', newContent: null };
+  var pendingSuggestionContent = null;
 
   // Toggle chat panel
   $('#aiChatToggle').on('click', function() {
@@ -711,18 +773,20 @@ $(function() {
   // Send AI chat message
   function sendAiChat(message) {
     if (!message.trim()) return;
-    var response = aiChatResponses[message] || defaultAiResponse;
+    var responseData = aiChatResponses[message] || defaultAiResponse;
+    var responseText = responseData.suggestion;
+    pendingSuggestionContent = responseData.newContent;
+
     var $suggestion = $('#aiChatSuggestion');
     var $text = $('#aiSuggestionText');
 
     $suggestion.show();
     $text.html('').addClass('ai-suggestion-typing');
 
-    // Typing animation for suggestion
     var i = 0;
     var typingInterval = setInterval(function() {
-      if (i < response.length) {
-        $text.append(document.createTextNode(response.charAt(i)));
+      if (i < responseText.length) {
+        $text.append(document.createTextNode(responseText.charAt(i)));
         i++;
       } else {
         clearInterval(typingInterval);
@@ -750,9 +814,34 @@ $(function() {
     sendAiChat(preset);
   });
 
-  // Apply suggestion
+  // Apply suggestion - actually change editor content
+  var versionHistory = [];
+  var currentVersion = 0;
+
   $('#btnApplySuggestion').on('click', function() {
+    if (pendingSuggestionContent) {
+      // Save current content as previous version
+      versionHistory.push($('#editorContent').html());
+
+      // Apply new content
+      $('#editorContent').html(pendingSuggestionContent.replace(/\n/g, '<br>'));
+      $('#previewContent').html(pendingSuggestionContent.replace(/\n/g, '<br>'));
+
+      // Update version pills
+      currentVersion++;
+      var vLabel = currentVersion === 1 ? 'v2 · AI 수정' : 'v' + (currentVersion + 1) + ' · AI 수정';
+      $('.version-pill').removeClass('active');
+      if (currentVersion < 3) {
+        $('.version-pill').eq(currentVersion).addClass('active');
+      }
+
+      // Update word count
+      var text = $('#editorContent').text();
+      $('#charCount').text(text.length);
+      $('#wordCount').text(text.trim() ? text.trim().split(/\s+/).length : 0);
+    }
     $('#aiChatSuggestion').fadeOut(200);
+    pendingSuggestionContent = null;
     HuAnim.toast('수정사항이 적용되었습니다', 'success');
   });
 
@@ -760,10 +849,24 @@ $(function() {
   // Feature 2: Version History
   // ===========================
   $(document).on('click', '.version-pill', function() {
-    var ver = $(this).data('version');
+    var ver = parseInt($(this).data('version'));
     $('.version-pill').removeClass('active');
     $(this).addClass('active');
-    HuAnim.toast('버전 v' + ver + '으로 되돌렸습니다', 'info');
+
+    if (ver === 1 && versionHistory.length > 0) {
+      // Restore original
+      $('#editorContent').html(versionHistory[0]);
+      $('#previewContent').html(versionHistory[0]);
+      HuAnim.toast('v1 원본으로 되돌렸습니다', 'info');
+    } else if (ver === 2 && versionHistory.length > 1) {
+      $('#editorContent').html(versionHistory[1] || versionHistory[0]);
+      $('#previewContent').html(versionHistory[1] || versionHistory[0]);
+      HuAnim.toast('v2 AI 수정 버전으로 되돌렸습니다', 'info');
+    } else if (ver <= currentVersion + 1) {
+      HuAnim.toast('v' + ver + ' 버전입니다', 'info');
+    } else {
+      HuAnim.toast('아직 이 버전이 없습니다', 'info');
+    }
   });
 
   // ===========================

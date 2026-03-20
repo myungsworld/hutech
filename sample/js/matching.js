@@ -147,21 +147,22 @@ $(function() {
     updateCostEstimate();
   });
 
-  // Language swap button
+  // Language swap button - swap by value, not index
   $(document).on('click', '.lang-arrow', function() {
     var $src = $('#srcLang');
     var $tgt = $('#tgtLang');
-    var srcIdx = $src.prop('selectedIndex');
-    var tgtIdx = $tgt.prop('selectedIndex');
-    $src.prop('selectedIndex', tgtIdx);
-    $tgt.prop('selectedIndex', srcIdx);
+    var srcVal = $src.val();
+    var tgtVal = $tgt.val();
+    $src.val(tgtVal);
+    $tgt.val(srcVal);
+    updateCostEstimate();
     HuAnim.toast('언어 쌍이 변경되었습니다', 'info');
   });
 
   // Helper: get current form values for analysis
   function getFormValues() {
-    var srcLang = $('.lang-pair select').eq(0).find('option:selected').text().replace(/\(.*\)/, '').trim();
-    var tgtLang = $('.lang-pair select').eq(1).find('option:selected').text().replace(/\(.*\)/, '').trim();
+    var srcLang = $('#srcLang option:selected').text().replace(/\(.*\)/, '').trim();
+    var tgtLang = $('#tgtLang option:selected').text().replace(/\(.*\)/, '').trim();
     var field = $('.form-group select').filter(function() {
       return $(this).closest('.form-group').find('label').text().indexOf('전문 분야') >= 0;
     }).val() || '법률';
@@ -192,13 +193,16 @@ $(function() {
     var $items = $('.analysis-item');
     $items.eq(0).find('.analysis-value').text(vals.langPair);
     $items.eq(1).find('.analysis-value').text(vals.fieldFull);
+    // Update cost in analysis
+    var cost = $('#costEstimateValue').text();
+    $items.eq(5).find('.analysis-value').text(cost);
 
     // Update confirmation section left side
     var $confirmRows = $('.confirm-detail-left .confirm-detail-row');
     $confirmRows.eq(0).find('.detail-value').text(vals.langPair);
     $confirmRows.eq(1).find('.detail-value').text(vals.fieldFull);
     $confirmRows.eq(3).find('.detail-value').text(vals.deadline);
-    $confirmRows.eq(4).find('.detail-value').text(vals.budget);
+    $confirmRows.eq(4).find('.detail-value').text(cost);
 
     HuAnim.showLoading('AI가 요청을 분석하고 있습니다', 2500, function() {
       goToSection(2);
@@ -323,6 +327,22 @@ $(function() {
       }, 800 + (i * 700));
     });
   }
+
+  // Rematch button - shuffle scores and re-animate
+  $(document).on('click', '#btnRematch', function() {
+    // Randomize scores slightly and re-sort
+    experts.forEach(function(e) {
+      var shift = (Math.random() - 0.5) * 15;
+      e.score = Math.min(99, Math.max(70, Math.round((e.score + shift) * 10) / 10));
+    });
+    // Re-sort by score
+    experts.sort(function(a, b) { return b.score - a.score; });
+
+    showMatchingProgress(function() {
+      startMatching();
+      HuAnim.toast('새로운 매칭 결과가 생성되었습니다', 'success');
+    });
+  });
 
   // ===========================
   // Feature 4: Expert Detail Modal
@@ -474,8 +494,8 @@ $(function() {
   // ===========================
   var fieldPrices = { '법률': 150, '의학': 180, '기술/IT': 120, '금융': 160, '마케팅': 100, '학술': 110, '일반': 80 };
   var langMultipliers = {
-    'English (영어)': 1.0, '한국어': 1.0, '日本語 (일본어)': 1.1,
-    '中文 (중국어)': 1.05, 'Deutsch (독일어)': 1.3, 'Français (프랑스어)': 1.25
+    'en': 1.0, 'ko': 1.0, 'ja': 1.1,
+    'zh': 1.05, 'de': 1.3, 'fr': 1.25
   };
 
   function updateCostEstimate() {
@@ -483,7 +503,7 @@ $(function() {
       return $(this).closest('.form-group').find('label').text().indexOf('전문 분야') >= 0;
     }).val() || '법률';
 
-    var tgtLang = $('#tgtLang').val() || '한국어';
+    var tgtLang = $('#tgtLang').val() || 'ko';
     var deadline = $('input[type="date"]').val() || '';
 
     var base = fieldPrices[field] || 100;

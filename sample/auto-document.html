@@ -332,7 +332,7 @@
               <span>AI 어시스턴트</span>
               <i class="bi bi-chevron-up ai-chat-chevron"></i>
             </div>
-            <div class="ai-chat-body" id="aiChatBody" style="display:none;">
+            <div class="ai-chat-body" id="aiChatBody">
               <div class="ai-chat-suggestion" id="aiChatSuggestion" style="display:none;">
                 <div class="ai-suggestion-bubble" id="aiSuggestionText"></div>
                 <button class="btn-apply-suggestion" id="btnApplySuggestion"><i class="bi bi-check-lg"></i> 적용</button>
@@ -505,7 +505,7 @@
       <div style="display:flex;justify-content:space-between;margin-top:16px;">
         <button class="btn-ghost" data-prev-step="3"><i class="bi bi-chevron-left"></i> 에디터로 돌아가기</button>
         <div style="display:flex;gap:8px;">
-          <button class="btn-ghost"><i class="bi bi-arrow-repeat"></i> 재평가</button>
+          <button class="btn-ghost" id="btnReEvaluate"><i class="bi bi-arrow-repeat"></i> 재평가</button>
           <button class="btn-primary" data-next-step="5"><i class="bi bi-check-lg"></i> 승인 & 출력 <i class="bi bi-chevron-right"></i></button>
         </div>
       </div>
